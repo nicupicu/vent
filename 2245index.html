@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neonatal Pulmonary Graphics – Interactive Study Guide</title>
+<meta name="description" content="A beginner-friendly interactive guide to neonatal ventilator waveforms, loops and lung mechanics.">
+<script>
+/* Apply saved theme before paint (no flash). Default follows prefers-color-scheme. */
+(function(){try{var t=localStorage.getItem('npg-theme');if(!t){t=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();
+</script>
+<style>
+/* =========================================================
+   1. THEMES  (edit colours here – each theme is one block)
+   ========================================================= */
+:root,[data-theme="light"]{
+  --bg:#ffffff;--surface:#f6f8fb;--surface-2:#eaeff6;--text:#111827;--muted:#4b5563;
+  --accent:#1d4ed8;--accent-2:#0f766e;--on-accent:#ffffff;--border:#cfd7e3;
+  --shadow:0 2px 10px rgba(17,24,39,.10);--grad:linear-gradient(135deg,#1d4ed8,#0f766e);
+  --c-tip:#e8f1ff;--c-warn:#fff1d6;--c-formula:#ece9ff;--c-bed:#e2f6ee;
+}
+[data-theme="calm"]{
+  --bg:#eef7fb;--surface:#ffffff;--surface-2:#dff0f5;--text:#17313f;--muted:#46606e;
+  --accent:#0b6b8a;--accent-2:#0f7a5c;--on-accent:#ffffff;--border:#bcd9e3;
+  --shadow:0 4px 16px rgba(11,107,138,.12);--grad:linear-gradient(135deg,#9fd8ea,#b7ecd6);
+  --c-tip:#e3f3fa;--c-warn:#fff3dc;--c-formula:#eaf0fb;--c-bed:#e4f7ee;
+}
+[data-theme="vibrant"]{
+  --bg:#fff4e6;--surface:#ffffff;--surface-2:#ffe3f0;--text:#22103a;--muted:#523f6e;
+  --accent:#c2185b;--accent-2:#5b21b6;--on-accent:#ffffff;--border:#f0b8d0;
+  --shadow:0 4px 16px rgba(194,24,91,.18);--grad:linear-gradient(135deg,#c2185b,#5b21b6);
+  --c-tip:#e8e0ff;--c-warn:#ffe9b8;--c-formula:#ffdff0;--c-bed:#d6f5e6;
+}
+[data-theme="dark"]{
+  --bg:#0b1220;--surface:#131c31;--surface-2:#1b2742;--text:#e6edf7;--muted:#a9b6cc;
+  --accent:#7cc4ff;--accent-2:#6ee7b7;--on-accent:#06121f;--border:#2a3a5c;
+  --shadow:0 4px 18px rgba(0,0,0,.5),0 0 14px rgba(124,196,255,.10);--grad:linear-gradient(135deg,#1e3a8a,#0f766e);
+  --c-tip:#14284a;--c-warn:#3a2c10;--c-formula:#221f4a;--c-bed:#10362b;
+}
+
+/* =========================================================
+   2. BASE
+   ========================================================= */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{margin:0;font:17px/1.65 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);transition:background .3s,color .3s}
+a{color:var(--accent)}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3{line-height:1.25;margin:0 0 .5em}
+h2{font-size:1.7rem}h3{font-size:1.2rem;color:var(--accent)}
+p{margin:0 0 1em}
+ul{padding-left:1.25em;margin:0 0 1em}li{margin-bottom:.4em}
+var{font-style:italic;font-family:Georgia,serif}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* =========================================================
+   3. TOP BAR, PROGRESS, SIDEBAR
+   ========================================================= */
+#progress{position:fixed;top:0;left:0;height:4px;width:0;background:var(--grad);z-index:1002}
+.topbar{position:sticky;top:0;z-index:1001;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;padding:.6rem 1rem;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:var(--shadow);transition:background .3s}
+.topbar .title{font-weight:700;flex:1;min-width:150px}
+.btn{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid var(--border);background:var(--surface-2);color:var(--text);border-radius:999px;padding:.4rem .9rem;transition:transform .15s,background .3s}
+.btn:hover{transform:translateY(-1px)}
+.btn.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent);font-weight:600}
+.themes{display:flex;gap:.35rem;align-items:center}
+.swatch{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);cursor:pointer;padding:0}
+.swatch[aria-pressed="true"]{outline:3px solid var(--accent);outline-offset:2px}
+.sw-light{background:linear-gradient(135deg,#fff 50%,#1d4ed8 50%)}
+.sw-calm{background:linear-gradient(135deg,#bfe6f3 50%,#b7ecd6 50%)}
+.sw-vibrant{background:linear-gradient(135deg,#c2185b 50%,#ffb300 50%)}
+.sw-dark{background:linear-gradient(135deg,#0b1220 50%,#7cc4ff 50%)}
+.layout{display:flex;align-items:flex-start;max-width:1280px;margin:0 auto}
+.sidebar{position:sticky;top:64px;width:250px;flex:none;max-height:calc(100vh - 70px);overflow:auto;padding:1rem;transition:margin .3s}
+.sidebar.collapsed{margin-left:-270px}
+.sidebar a{display:block;padding:.4rem .7rem;border-radius:8px;text-decoration:none;color:var(--muted);font-size:.9rem;border-left:3px solid transparent}
+.sidebar a:hover{background:var(--surface-2)}
+.sidebar a.active{color:var(--accent);background:var(--surface-2);border-left-color:var(--accent);font-weight:600}
+main{flex:1;min-width:0;padding:1rem 1.2rem 4rem}
+
+/* =========================================================
+   4. HERO & SECTIONS
+   ========================================================= */
+.hero{background:var(--grad);color:#fff;border-radius:24px;padding:3rem 1.6rem;margin-bottom:2rem;box-shadow:var(--shadow)}
+[data-theme="calm"] .hero{color:#0d2f3d}
+.hero h1{font-size:clamp(1.8rem,5vw,3rem)}
+.hero p{font-size:1.15rem;max-width:42rem}
+.hero .btn.primary{background:#fff;color:#111827;border-color:#fff;font-size:1rem}
+section.sec{margin-bottom:3rem}
+.sec-head{display:flex;gap:.8rem;align-items:center;border-left:6px solid var(--accent);padding-left:.8rem;margin-bottom:.5rem}
+.sec-head .ico{font-size:2rem}
+.sec-head h2{margin:0}
+.sub{height:5px;width:120px;background:var(--grad);border-radius:5px;margin:.2rem 0 1rem}
+.intro{color:var(--muted);font-size:1.05rem}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:1.1rem 1.3rem;box-shadow:var(--shadow);margin-bottom:1rem;transition:background .3s}
+.grid{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.two{display:grid;gap:1.2rem;grid-template-columns:1fr;align-items:start}
+@media(min-width:900px){.two{grid-template-columns:1fr 1fr}}
+.card h3{margin-top:0}
+.badge{display:inline-block;background:var(--surface-2);color:var(--text);border:1px solid var(--border);border-radius:999px;padding:.15rem .7rem;font-size:.8rem;margin:.1rem}
+
+/* Callouts */
+.callout{border-radius:14px;padding:.9rem 1.1rem;margin:1rem 0;border-left:6px solid var(--accent);color:var(--text)}
+.callout b.t{display:block;margin-bottom:.3rem}
+.callout.tip{background:var(--c-tip)}
+.callout.warn{background:var(--c-warn);border-left-color:#d97706}
+.callout.formula{background:var(--c-formula);border-left-color:var(--accent-2)}
+.callout.bed{background:var(--c-bed);border-left-color:#059669}
+.callout p:last-child{margin:0}
+
+/* Formula card */
+.eq{font:italic 1.35rem Georgia,"Times New Roman",serif;text-align:center;padding:.7rem;background:var(--surface);border:1px dashed var(--accent);border-radius:12px;margin:.6rem 0;overflow-x:auto}
+.eq .frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .3rem}
+.eq .frac>span:first-child{border-bottom:2px solid var(--text);padding:0 .3rem}
+.eq .frac>span:last-child{padding:0 .3rem}
+.vars{font-size:.95rem}.vars li{margin-bottom:.25rem}
+.worked{background:var(--surface);border-radius:10px;padding:.6rem .9rem;margin-top:.6rem;border:1px solid var(--border);font-size:.95rem}
+
+/* Equipment cards */
+.eq-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:.9rem 1rem;box-shadow:var(--shadow);transition:transform .2s,background .3s}
+.eq-card:hover{transform:translateY(-4px)}
+.eq-card strong{display:block}.eq-card span{color:var(--muted);font-size:.88rem}
+.legacy{border-style:dashed}
+
+/* Figures */
+figure.fig{margin:0 0 1rem;background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:.8rem;box-shadow:var(--shadow)}
+figure.fig img{max-width:100%;height:auto;display:block;margin:0 auto;border-radius:10px;background:#fff;cursor:zoom-in}
+figure.fig figcaption{font-size:.92rem;color:var(--muted);margin-top:.6rem}
+.fig-missing{display:flex;align-items:center;justify-content:center;flex-direction:column;min-height:150px;border:2px dashed var(--border);border-radius:10px;color:var(--muted);text-align:center;padding:1rem;background:var(--surface-2)}
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:2000;padding:1rem}
+.lightbox.open{display:flex}
+.lightbox img{max-width:95vw;max-height:88vh;background:#fff;border-radius:8px}
+.lightbox button{position:absolute;top:14px;right:14px;font-size:1.4rem;background:#fff;color:#111;border:0;border-radius:50%;width:44px;height:44px;cursor:pointer}
+
+/* Quiz */
+.q{margin-bottom:1rem}
+.q .opts{display:grid;gap:.5rem;margin-top:.5rem}
+.opt{text-align:left;font:inherit;border:1px solid var(--border);background:var(--surface);color:var(--text);padding:.55rem .8rem;border-radius:10px;cursor:pointer}
+.opt:hover{border-color:var(--accent)}
+.opt.right{background:#c9f2dc;color:#0b3d27;border-color:#059669}
+.opt.wrong{background:#fcd4d4;color:#5a1010;border-color:#dc2626}
+.fb{margin-top:.5rem;font-size:.95rem;color:var(--muted)}
+.score{font-weight:700;font-size:1.1rem}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left}
+th{background:var(--surface-2)}
+
+#totop{position:fixed;right:18px;bottom:18px;width:46px;height:46px;border-radius:50%;border:0;background:var(--accent);color:var(--on-accent);font-size:1.3rem;cursor:pointer;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .3s;z-index:1000}
+#totop.show{opacity:1;pointer-events:auto}
+footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--border);padding-top:1rem}
+
+.fade{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s}
+.fade.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}.fade{opacity:1;transform:none}}
+
+@media(max-width:899px){
+  .layout{flex-direction:column}
+  .sidebar{position:static;width:100%;max-height:none;display:flex;flex-wrap:wrap;gap:.2rem;padding:.5rem 1rem}
+  .sidebar.collapsed{display:none;margin:0}
+  .sidebar a{border-left:0;border-bottom:3px solid transparent}
+}
+@media print{
+  .topbar,.sidebar,#progress,#totop,.lightbox,.hero .btn{display:none!important}
+  body{background:#fff;color:#000;font-size:11pt}.fade{opacity:1!important;transform:none!important}
+  .card,figure.fig,.callout{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div id="progress" role="progressbar" aria-label="Reading progress" aria-valuemin="0" aria-valuemax="100"></div>
+
+<!-- ================= TOP BAR ================= -->
+<header class="topbar">
+  <button class="btn" id="navToggle" aria-label="Show or hide section menu" aria-expanded="true">☰ Menu</button>
+  <div class="title">🫁 Neonatal Pulmonary Graphics</div>
+  <div class="themes" role="group" aria-label="Colour theme">
+    <button class="swatch sw-calm" data-theme-btn="calm" aria-label="Bright and Calm theme" title="Bright &amp; Calm" aria-pressed="false"></button>
+    <button class="swatch sw-vibrant" data-theme-btn="vibrant" aria-label="Vibrant theme" title="Vibrant" aria-pressed="false"></button>
+    <button class="swatch sw-light" data-theme-btn="light" aria-label="Light theme" title="Light" aria-pressed="false"></button>
+    <button class="swatch sw-dark" data-theme-btn="dark" aria-label="Dark theme" title="Dark" aria-pressed="false"></button>
+  </div>
+  <button class="btn" id="quickToggle" aria-label="Quick toggle between light and dark">🌓 Light/Dark</button>
+</header>
+
+<div class="layout">
+<nav class="sidebar" id="sidebar" aria-label="Sections">
+  <a href="#s1">1 · Why graphics matter</a>
+  <a href="#s2">2 · Indications</a>
+  <a href="#s3">3 · Graphical interfaces</a>
+  <a href="#s4">4 · Flow sensors</a>
+  <a href="#s5">5 · Equipment</a>
+  <a href="#s6">6 · Pressure waveform</a>
+  <a href="#s7">7 · Flow waveform</a>
+  <a href="#s8">8 · Volume waveform</a>
+  <a href="#s9">9 · Patient–ventilator</a>
+  <a href="#s10">10 · Pressure–volume loop</a>
+  <a href="#s11">11 · Flow–volume loop</a>
+  <a href="#s12">12 · Measurements &amp; maths</a>
+  <a href="#s13">13 · Cheat-sheet &amp; quiz</a>
+</nav>
+
+<main id="top">
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <h1>Neonatal Pulmonary Graphics</h1>
+  <p>Learn to read the live pictures a ventilator draws of every breath your tiny patient takes — waveforms, loops and the numbers behind them.</p>
+  <a class="btn primary" href="#s1">Start learning →</a>
+</header>
+
+<!-- ================= 1 INTRO ================= -->
+<section class="sec fade" id="s1">
+  <div class="sec-head"><span class="ico">📈</span><h2>Why graphics matter</h2></div><div class="sub"></div>
+  <p class="intro">Think of the ventilator screen as a live “heart monitor” for breathing: it shows, breath after breath, how the baby and the machine are working together.</p>
+  <div class="two">
+    <div class="card"><h3>Real-time feedback</h3><p>Graphical user interfaces (GUIs) give you a constant, breath-by-breath view of the conversation between the infant and the ventilator. You do not have to wait for a blood gas to learn that something has changed.</p></div>
+    <div class="card"><h3>A great teacher</h3><p>Because you can literally see what a setting does, graphics are an excellent way to learn ventilation. Change a setting, watch the curve change.</p></div>
+  </div>
+  <div class="card"><h3>From add-on to built-in</h3><p>For roughly the last decade, graphics came as an optional monitor you could add to a ventilator. The newest ventilators now have colour touch-screens built right in.</p></div>
+  <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>A <strong>waveform</strong> plots one thing (pressure, flow or volume) against time. A <strong>loop</strong> plots one thing against another (for example pressure against volume) so you see how they relate.</p></div>
+</section>
+
+<!-- ================= 2 INDICATIONS ================= -->
+<section class="sec fade" id="s2">
+  <div class="sec-head"><span class="ico">🎯</span><h2>When do we use graphics?</h2></div><div class="sub"></div>
+  <p class="intro">Graphics help in four big jobs: tuning the ventilator, judging the baby’s own effort, checking if a drug worked, and reading the lungs themselves.</p>
+  <div class="grid">
+    <div class="card"><h3>A. Tune the ventilator</h3><ul>
+      <li>Peak inspiratory pressure (PIP)</li><li>Positive end-expiratory pressure (PEEP)</li>
+      <li>Inspiratory or expiratory tidal volume (V<sub>TI</sub> or V<sub>TE</sub>)</li>
+      <li>Inspiratory time (T<sub>I</sub>) and expiratory time (T<sub>E</sub>)</li>
+      <li>Flow rate</li><li>Synchronization with the baby</li><li>Compliance</li></ul></div>
+    <div class="card"><h3>B. Judge spontaneous effort</h3><ul>
+      <li>The baby’s own tidal volume (V<sub>T</sub>)</li><li>Minute ventilation (MV)</li>
+      <li>Breathing pattern</li><li>Readiness for extubation</li></ul></div>
+    <div class="card"><h3>C. Check drug response</h3><ul>
+      <li>Surfactant</li><li>Bronchodilators</li><li>Diuretics</li><li>Steroids</li></ul></div>
+    <div class="card"><h3>D. Read waves, loops &amp; mechanics</h3><ul>
+      <li>Waveforms: pressure, flow, volume</li><li>Loops: pressure–volume and flow–volume</li>
+      <li>Mechanics: dynamic or static compliance, inspiratory and expiratory resistance, time constants</li></ul></div>
+  </div>
+  <div class="card"><h3>E. Evaluating the disease</h3>
+    <p>Graphics help you tell apart <strong>restrictive</strong> problems (stiff lungs), <strong>obstructive</strong> problems (narrowed airways), how <strong>severe</strong> things are, and whether the baby is <strong>recovering</strong>.</p></div>
+</section>
+
+<!-- ================= 3 GUI ================= -->
+<section class="sec fade" id="s3">
+  <div class="sec-head"><span class="ico">🖥️</span><h2>Graphical user interfaces (GUIs)</h2></div><div class="sub"></div>
+  <p class="intro">A GUI is simply the screen that draws your baby’s breathing as it happens.</p>
+  <div class="grid">
+    <div class="card"><h3>What it does</h3><p>Shows a continuous, real-time, breath-to-breath picture of how patient and ventilator interact.</p></div>
+    <div class="card"><h3>Teaching value</h3><p>It is an excellent teaching tool — students see cause and effect immediately.</p></div>
+    <div class="card"><h3>Hardware story</h3><p>Graphics monitors have been an add-on option for about a decade. The latest generation of ventilators has integral colour touch-screens.</p></div>
+  </div>
+</section>
+
+<!-- ================= 4 SENSORS ================= -->
+<section class="sec fade" id="s4">
+  <div class="sec-head"><span class="ico">🔬</span><h2>Where and how flow is measured</h2></div><div class="sub"></div>
+  <p class="intro">Every graph starts with a sensor. If the sensor is in the wrong place, the picture lies.</p>
+  <div class="two">
+    <div class="card"><h3>✅ Proximal sensor</h3><p>Sits right at the airway opening (the connection to the endotracheal tube). This position is critical for accurate waveforms, loops and numbers.</p></div>
+    <div class="card"><h3>⚠️ Distal sensor</h3><p>Sits inside the ventilator or near where the tubing leaves it. Its readings include the stretch (compliance) and resistance of the whole breathing circuit, not just the baby.</p></div>
+  </div>
+  <div class="callout warn"><b class="t">⚠️ Clinical caution</b><p>The so-called “circuit compliance compensation” maths does not correct the displayed data accurately. Do not use it in very preterm babies, because under-delivering volume to them may promote lung injury.</p></div>
+  <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>Imagine measuring how much water a child drinks by checking the tap in the kitchen instead of the cup at their lips: some water is lost in the pipes. A distal sensor does the same with air.</p></div>
+  <h3>Three types of flow sensor</h3>
+  <div class="grid">
+    <div class="card"><h3>🔥 Heated-wire anemometer</h3><p>A thin wire is kept at a steady temperature. Passing gas cools it, so the sensor measures how much electric current is needed to keep it warm. That current converts to flow, and adding up flow over time gives volume.</p></div>
+    <div class="card"><h3>↔️ Differential-pressure pneumotachometer</h3><p>Gas flows across an element in the sensor, creating a pressure difference between the upstream and downstream ports. That pressure change is proportional to flow.</p></div>
+    <div class="card"><h3>⚡ Diaphragmatic neural sensor</h3><p>Uses a modified feeding tube carrying several electrodes that pick up the diaphragm’s electrical activity (diaphragmatic EMG) — it reads the baby’s breathing drive rather than airflow.</p></div>
+  </div>
+</section>
+
+<!-- ================= 5 EQUIPMENT ================= -->
+<section class="sec fade" id="s5">
+  <div class="sec-head"><span class="ico">🧰</span><h2>Ventilators with graphics</h2></div><div class="sub"></div>
+  <p class="intro">Reference list from the chapter. Your unit may own different models — always learn your own screen.</p>
+  <h3>Neonatal-capable ventilators with built-in GUI</h3>
+  <div class="grid">
+    <div class="eq-card"><strong>Avea</strong><span>CareFusion, Yorba Linda, CA</span></div>
+    <div class="eq-card"><strong>Dräger Babylog VN500</strong><span>Draeger Medical, Telford, PA</span></div>
+    <div class="eq-card"><strong>Dräger Evita XL</strong><span>Draeger Medical, Telford, PA</span></div>
+    <div class="eq-card"><strong>Dräger Evita Infinity V500</strong><span>Draeger Medical, Telford, PA</span></div>
+    <div class="eq-card"><strong>Puritan Bennett 840</strong><span>Covidien-Puritan Bennett, Mansfield, MA</span></div>
+    <div class="eq-card"><strong>Servo-i</strong><span>Maquet Critical Care, Wayne, NJ</span></div>
+    <div class="eq-card"><strong>Hamilton C-2</strong><span>Hamilton Medical, Reno, NV</span></div>
+    <div class="eq-card"><strong>Hamilton S-1</strong><span>Hamilton Medical, Reno, NV</span></div>
+    <div class="eq-card"><strong>SLE 4000</strong><span>SLE Ltd., Surrey, UK</span></div>
+    <div class="eq-card"><strong>SLE 5000</strong><span>SLE Ltd., Surrey, UK</span></div>
+    <div class="eq-card"><strong>Newport e360T</strong><span>Newport Medical Instruments, Newport Beach, CA</span></div>
+    <div class="eq-card"><strong>Newport WAVE</strong><span>Newport Medical Instruments, Newport Beach, CA — graphics only if Compass is added</span></div>
+  </div>
+  <h3 style="margin-top:1.5rem">Legacy units still in use (no longer manufactured)</h3>
+  <div class="grid">
+    <div class="eq-card legacy"><strong>VIP BIRD / GOLD</strong><span>with Bird Graphic Monitor — CareFusion Health Care, Yorba Linda, CA</span></div>
+    <div class="eq-card legacy"><strong>Bear Cub 750</strong><span>with Ventilator Graphics Monitor — CareFusion Healthcare, Yorba Linda, CA</span></div>
+    <div class="eq-card legacy"><strong>Dräger Babylog 8000+</strong><span>Dräger, Telford, PA</span></div>
+  </div>
+</section>
+
+<!-- ================= 6 PRESSURE ================= -->
+<section class="sec fade" id="s6">
+  <div class="sec-head"><span class="ico">⛰️</span><h2>The pressure waveform</h2></div><div class="sub"></div>
+  <p class="intro">Pressure on the vertical axis, time along the bottom. It is the first trace to learn.</p>
+  <div class="two">
+    <div><div data-fig="fig22-1"></div></div>
+    <div class="card"><h3>What you’re seeing (Fig. 22.1, top trace)</h3><ul>
+      <li><strong>Up-sweep</strong> = inspiration (air going in).</li>
+      <li><strong>Down-sweep</strong> = expiration (air coming out).</li>
+      <li><strong>Letter A</strong> = the highest point = PIP.</li>
+      <li><strong>Letter B</strong> = the baseline = PEEP.</li>
+      <li>The <strong>shape</strong> tells you the breath type: triangular = volume breath, square = pressure breath.</li></ul></div>
+  </div>
+  <div class="two">
+    <div><div data-fig="fig22-2"></div></div>
+    <div class="card"><h3>Mean airway pressure</h3><p>The shaded area under the pressure curve represents the mean airway pressure — the average pressure the lungs feel over the whole breath cycle. A wider, taller shaded area means a higher average.</p>
+    <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>It is like the average water level in a bath that keeps filling and draining: the more time spent high, the higher the average.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= 7 FLOW ================= -->
+<section class="sec fade" id="s7">
+  <div class="sec-head"><span class="ico">🌬️</span><h2>The flow waveform</h2></div><div class="sub"></div>
+  <p class="intro">Flow shows how fast gas moves — in or out — at every instant.</p>
+  <div class="card"><h3>What you’re seeing (Fig. 22.1, middle trace)</h3><ul>
+    <li>The <strong>horizontal line</strong> is zero flow.</li>
+    <li><strong>Above</strong> the line = inspiratory flow; <strong>below</strong> = expiratory flow.</li>
+    <li><strong>Letter C</strong> = biggest upward swing = peak inspiratory flow.</li>
+    <li><strong>Letter D</strong> = biggest downward swing = peak expiratory flow.</li>
+    <li><strong>Letter E</strong> = inspiratory time, measured from the moment flow starts until expiratory flow begins.</li>
+    <li><strong>Letter F</strong> = expiratory time, from the moment expiratory flow starts until the next inspiration begins. When expiratory flow returns to zero (arrow), the lung has finished emptying.</li></ul></div>
+
+  <h3>Flow at zero: nothing more can go in</h3>
+  <div class="two">
+    <div><div data-fig="fig22-3"></div></div>
+    <div class="card"><p>Once flow reaches zero (arrows), no extra volume can be delivered to the baby.</p><ul>
+      <li><strong>Panel a:</strong> inspiratory time is set so inspiration ends just as flow returns to zero.</li>
+      <li><strong>Panel b:</strong> inspiratory time is too long. A pressure plateau appears — pressure is held but no new volume goes in — and mean airway pressure rises.</li></ul></div>
+  </div>
+
+  <h3>Flow cycling</h3>
+  <div class="two">
+    <div><div data-fig="fig22-4"></div></div>
+    <div class="card"><p>With flow cycling, the breath switches into expiration by a rule, usually when flow falls to about 5–25 % of peak inspiratory flow. Letting the baby help decide when inspiration ends can improve synchronization. It is available on newer ventilators and on any ventilator with pressure support.</p>
+    <ul><li><strong>Red</strong> = inspiration; <strong>blue</strong> = expiration.</li><li>The arrow marks the end of inspiration while flow is still above the zero line.</li></ul></div>
+  </div>
+
+  <h3>Gas trapping</h3>
+  <div class="two">
+    <div><div data-fig="fig22-5"></div></div>
+    <div class="card"><p>If expiratory flow has not returned to zero before the next breath starts (arrow), air may be getting trapped in the lungs.</p>
+    <div class="callout warn"><b class="t">⚠️ Clinical caution: gas trapping</b><p>The expiratory time is too short for the lung to empty. Look for an expiratory trace that is cut off before reaching the zero line.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= 8 VOLUME ================= -->
+<section class="sec fade" id="s8">
+  <div class="sec-head"><span class="ico">🧪</span><h2>The volume waveform</h2></div><div class="sub"></div>
+  <p class="intro">Volume is the total amount of gas moved — flow added up over time.</p>
+  <div class="card"><h3>What you’re seeing (Fig. 22.1, bottom trace)</h3><ul>
+    <li>Sweeping <strong>upward</strong> = inspiration; sweeping <strong>downward</strong> = expiration.</li>
+    <li>The <strong>red line</strong> marks the delivered inspiratory tidal volume.</li></ul></div>
+  <div class="two">
+    <div><div data-fig="fig22-6"></div></div>
+    <div class="card"><h3>Endotracheal tube leak</h3><p>When the expiratory part of the volume waveform fails to come back to the zero baseline (arrow), some gas is escaping around the tube. The flow trace in this figure shows the same story: expiratory flow does not fully return to baseline before the next breath.</p>
+    <div class="callout warn"><b class="t">⚠️ Clinical caution: ET-tube leak</b><p>Volume that goes in but doesn’t come back out means measurements of exhaled volume will be lower than what was delivered.</p></div></div>
+  </div>
+  <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>Traditional volume ventilation delivers gas at a constant speed, so the flow trace looks like a <strong>square block</strong>. Some ventilators let you make that flow <strong>decelerate</strong> (taper off) instead.</p></div>
+</section>
+
+<!-- ================= 9 INTERACTION ================= -->
+<section class="sec fade" id="s9">
+  <div class="sec-head"><span class="ico">🤝</span><h2>Baby and ventilator, together</h2></div><div class="sub"></div>
+  <p class="intro">Good ventilation means the machine’s breaths match the baby’s own effort.</p>
+  <h3>Unsynchronized IMV</h3>
+  <div class="two">
+    <div><div data-fig="fig22-7"></div></div>
+    <div class="card"><p>Intermittent mandatory ventilation (IMV) was the first neonatal mode that let babies breathe between machine breaths. But the machine breaths land at random points in the baby’s own breathing cycle, which can cause harm — including pneumothorax and intraventricular hemorrhage (IVH).</p><ul>
+      <li><strong>Yellow arrows:</strong> the baby’s effort adds to the ventilator breath, giving a very high V<sub>T</sub>.</li>
+      <li><strong>Green arrows:</strong> the baby starts to breathe out while the machine is still pushing air in.</li></ul></div>
+  </div>
+  <h3>Synchronized IMV (SIMV)</h3>
+  <div class="two">
+    <div><div data-fig="fig22-8"></div></div>
+    <div class="card"><p>SIMV times the machine breath to the baby’s own inspiratory effort, so they work together instead of colliding.</p><ul>
+      <li><strong>Yellow arrows:</strong> synchronized machine breath.</li><li><strong>Red arrows:</strong> the baby’s own breath, with no machine help.</li></ul></div>
+  </div>
+  <h3>Assist/control (A/C)</h3>
+  <div class="two">
+    <div><div data-fig="fig22-9"></div></div>
+    <div class="card"><p>A/C <strong>assists</strong> by starting a machine breath whenever the baby tries to breathe, and <strong>controls</strong> by delivering a time-cycled breath if the baby is apneic or fails to trigger.</p><ul>
+      <li><strong>Red:</strong> time-cycled machine breath during apnea.</li><li><strong>Yellow:</strong> breaths started by the patient.</li></ul></div>
+  </div>
+  <h3>Pressure support</h3>
+  <div class="two">
+    <div><div data-fig="fig22-10"></div></div>
+    <div class="card"><p>Pressure support is very similar to A/C: every breath the patient triggers is supported by a set pressure. The difference is that it can also be blended into SIMV as a combined mode (shown here).</p></div>
+  </div>
+</section>
+
+<!-- ================= 10 PV LOOP ================= -->
+<section class="sec fade" id="s10">
+  <div class="sec-head"><span class="ico">⭕</span><h2>The pressure–volume (P–V) loop</h2></div><div class="sub"></div>
+  <p class="intro">This loop shows how much volume you get for each unit of pressure — the lung’s “stretchiness”.</p>
+  <div class="two">
+    <div><div data-fig="fig22-11"></div></div>
+    <div class="card"><h3>What you’re seeing</h3><ul>
+      <li><strong>Horizontal axis:</strong> pressure. <strong>Vertical axis:</strong> volume.</li>
+      <li><strong>Inspiration</strong> sweeps up from the baseline (PEEP) to PIP.</li>
+      <li><strong>Expiration</strong> sweeps back down from PIP to baseline.</li>
+      <li>A line drawn between the two end-points shows compliance (ΔV/ΔP): steeper means stretchier lungs.</li></ul></div>
+  </div>
+  <h3>Is PEEP enough?</h3>
+  <div class="two">
+    <div><div data-fig="fig22-12"></div></div>
+    <div class="card"><p>PEEP keeps some air in the lungs at the end of expiration (end-expiratory lung volume). If the inspiratory limb has a <strong>lower inflection point</strong> — a bend that marks the opening pressure — then PEEP is inadequate.</p></div>
+  </div>
+  <h3>Overdistension</h3>
+  <div class="two">
+    <div><div data-fig="fig22-13"></div></div>
+    <div class="card"><p>If the top of the inspiratory limb flattens, extra pressure is being applied with no extra volume — the lung is over-stretched. Most neonatal ventilators report this as the <strong>C<sub>20</sub>/C ratio</strong>.</p>
+    <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>Blowing up a balloon: at first it’s hard, then easy, then at the end you push hard and it hardly grows. That last stage is overdistension.</p></div></div>
+  </div>
+  <h3>Is flow high enough?</h3>
+  <div class="two">
+    <div><div data-fig="fig22-14"></div></div>
+    <div class="card"><p>If the ventilator isn’t supplying flow fast enough, the inspiratory side looks dented or scooped (<strong>cusping</strong>). Severe flow limitation can twist the loop into a <strong>figure-8</strong>.</p>
+    <div class="callout bed"><b class="t">🩺 At the bedside</b><p>A cusped or figure-8 loop is a clue that the baby wants more flow than the machine is giving.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= 11 FV LOOP ================= -->
+<section class="sec fade" id="s11">
+  <div class="sec-head"><span class="ico">🔄</span><h2>The flow–volume (F–V) loop</h2></div><div class="sub"></div>
+  <p class="intro">This loop shows how fast air moves at each point of the breath, so it is great for airway resistance.</p>
+  <div class="two">
+    <div><div data-fig="fig22-15"></div></div>
+    <div class="card"><h3>What you’re seeing</h3><ul>
+      <li><strong>Horizontal axis:</strong> volume. <strong>Vertical axis:</strong> flow.</li>
+      <li>The breath starts at zero, moves <strong>up and to the right</strong> during inspiration, ending at the delivered inspiratory volume.</li>
+      <li>On expiration it travels <strong>down and to the left</strong>, back to zero.</li></ul></div>
+  </div>
+  <div class="two">
+    <div><div data-fig="fig22-16"></div><div data-fig="fig22-17"></div></div>
+    <div class="card"><h3>Resistance changes the shape</h3><ul>
+      <li><strong>Increased inspiratory resistance (Fig. 22.16):</strong> the inspiratory limb is flattened.</li>
+      <li><strong>Increased expiratory resistance (Fig. 22.17):</strong> the expiratory limb is flattened.</li></ul>
+      <div class="callout tip"><b class="t">💡 Plain-language explainer</b><p>Breathing through a narrow straw squashes the flow peak, so the loop looks flat.</p></div></div>
+  </div>
+  <div class="two">
+    <div><div data-fig="fig22-18"></div></div>
+    <div class="card"><h3>Did the bronchodilator work?</h3><p>The loop helps check whether a bronchodilator is helping airway reactivity. In Fig. 22.18, loop B (after treatment) shows higher inspiratory and expiratory flow than loop A (before).</p></div>
+  </div>
+  <div class="two">
+    <div><div data-fig="fig22-19"></div></div>
+    <div class="card"><h3>Secretions or water</h3><p>Secretions or water in the tubing or flow sensor show up as changes on the loop display. Suctioning should only be done when indicated, so the loop is a useful way to decide when to suction or drain water from the circuit. Fig. 22.19 shows an infant who needs suctioning.</p>
+    <div class="callout bed"><b class="t">🩺 At the bedside</b><p>A messy loop can be your cue to check the circuit and airway before changing ventilator settings.</p></div></div>
+  </div>
+</section>
+
+<!-- ================= 12 DYNAMICS ================= -->
+<section class="sec fade" id="s12">
+  <div class="sec-head"><span class="ico">🧮</span><h2>Measurements and calculations</h2></div><div class="sub"></div>
+  <p class="intro">The numbers behind the pictures. Worked examples below use made-up values to practise the arithmetic; the normal ranges are from the chapter.</p>
+  <div class="grid">
+    <div class="card"><h3>Tidal volume (V<sub>T</sub>)</h3><p>Measured on inspiration and on expiration. Normal delivered V<sub>T</sub> is <strong>4–7 mL/kg</strong>.</p><div class="worked"><strong>Example:</strong> 3 kg baby → 12 to 21 mL.</div></div>
+    <div class="card"><h3>Minute ventilation (MV)</h3><div class="eq">MV = V<sub>T</sub> × rate</div><p>Normal range <strong>240–360 mL/kg/min</strong>.</p><div class="worked"><strong>Example:</strong> 5 mL/kg × 50 breaths/min = 250 mL/kg/min (in range).</div></div>
+    <div class="card"><h3>Peak vs. static pressure</h3><p>Pressure can be read as peak inspiratory pressure or as static pressure. Static pressure comes from an <strong>inflation-hold</strong>: the exhalation valve is closed and flow stops during a machine breath, so you read the pressure with nothing moving.</p></div>
+  </div>
+  <div class="callout tip"><b class="t">💡 Plain-language explainer: compliance &amp; resistance</b><p><strong>Compliance</strong> = how stretchy a balloon is (how much volume for each bit of pressure). A stiff lung is low-compliance. <strong>Resistance</strong> = how narrow a drinking straw is (how much pressure to push a given flow). A narrow airway is high-resistance.</p></div>
+  <div class="two">
+    <div class="callout formula"><b class="t">🧮 Formula: dynamic compliance</b>
+      <div class="eq">C<sub>D</sub> = <span class="frac"><span>V<sub>Ti</sub></span><span>PIP − PEEP</span></span></div>
+      <ul class="vars"><li><var>C<sub>D</sub></var>: compliance based on peak pressure.</li><li><var>V<sub>Ti</sub></var>: inspiratory tidal volume.</li><li><var>PIP − PEEP</var>: the pressure swing used to inflate the lung.</li></ul>
+      <div class="worked"><strong>Example:</strong> V<sub>Ti</sub> 12 mL, PIP 20, PEEP 5 → 12 ÷ 15 = 0.8 mL/cmH<sub>2</sub>O.</div></div>
+    <div class="callout formula"><b class="t">🧮 Formula: static compliance</b>
+      <div class="eq">C<sub>ST</sub> = <span class="frac"><span>V<sub>Ti</sub></span><span>P<sub>ST</sub> − PEEP</span></span></div>
+      <ul class="vars"><li><var>C<sub>ST</sub></var>: compliance based on static pressure.</li><li><var>P<sub>ST</sub></var>: static pressure from the inflation hold.</li></ul>
+      <div class="worked"><strong>Example:</strong> V<sub>Ti</sub> 12 mL, P<sub>ST</sub> 18, PEEP 5 → 12 ÷ 13 ≈ 0.92 mL/cmH<sub>2</sub>O.</div></div>
+  </div>
+  <div class="callout formula"><b class="t">🧮 C<sub>20</sub>/C ratio</b>
+    <p>The compliance of the last 20 % of the P–V curve divided by the compliance of the whole curve. With overdistension this ratio is <strong>below 1.0</strong>.</p>
+    <div class="worked"><strong>Example:</strong> a reading of 0.7 means the end of the breath is much stiffer than the start → suspect overdistension.</div></div>
+  <div class="callout formula"><b class="t">🧮 Formula: airway resistance</b>
+    <div class="eq">R<sub>AW</sub> = <span class="frac"><span>PIP − PEEP</span><span>Flow</span></span> &nbsp; (cmH<sub>2</sub>O/L/s)</div>
+    <p>Resistance links pressure and flow. The pressure can be dynamic or static, and flow can be taken in three ways:</p>
+    <ul class="vars"><li><strong>Peak flow:</strong> the maximum flow in inspiration or expiration.</li><li><strong>Average flow:</strong> based on multiple-point linear regression.</li><li><strong>Mid-volume flow:</strong> the flow measured at the halfway point of volume delivery.</li></ul>
+    <div class="worked"><strong>Example:</strong> PIP 20, PEEP 5, flow 0.5 L/s → 15 ÷ 0.5 = 30 cmH<sub>2</sub>O/L/s.</div></div>
+</section>
+
+<!-- ================= 13 SUMMARY & QUIZ ================= -->
+<section class="sec fade" id="s13">
+  <div class="sec-head"><span class="ico">✅</span><h2>Cheat-sheet and self-check</h2></div><div class="sub"></div>
+  <div class="card"><table>
+    <tr><th>Clue on screen</th><th>Meaning</th></tr>
+    <tr><td>Pressure peak / baseline</td><td>PIP / PEEP; area under curve = mean airway pressure</td></tr>
+    <tr><td>Flow at zero before expiration</td><td>No more volume going in; long T<sub>I</sub> gives a plateau and higher mean pressure</td></tr>
+    <tr><td>Flow cycling</td><td>Breath ends at ~5–25 % of peak inspiratory flow</td></tr>
+    <tr><td>Expiratory flow not back to zero</td><td>Possible gas trapping</td></tr>
+    <tr><td>Volume curve not returning to zero</td><td>Endotracheal tube leak</td></tr>
+    <tr><td>P–V loop lower inflection point</td><td>PEEP inadequate</td></tr>
+    <tr><td>P–V loop top flattens, C<sub>20</sub>/C &lt; 1.0</td><td>Overdistension</td></tr>
+    <tr><td>P–V loop cusp / figure-8</td><td>Inadequate inspiratory flow</td></tr>
+    <tr><td>F–V loop flat inspiratory / expiratory limb</td><td>High inspiratory / expiratory resistance</td></tr>
+    <tr><td>Normal V<sub>T</sub> / MV</td><td>4–7 mL/kg / 240–360 mL/kg/min</td></tr>
+  </table></div>
+  <h3>Quick quiz</h3>
+  <div class="card"><div id="quiz"></div>
+    <p class="score" aria-live="polite">Score: <span id="score">0</span> / <span id="total">0</span></p>
+    <button class="btn primary" id="quizReset">Reset quiz</button></div>
+  <footer>Content paraphrased from “Neonatal Pulmonary Graphics” by M.C. Mammel and S.M. Donn, in <em>Manual of Neonatal Respiratory Care</em>, 4th ed. (Springer, 2017), chapter 22. For education only — not a substitute for clinical judgement or local protocols.</footer>
+</section>
+</main>
+</div>
+
+<button id="totop" aria-label="Back to top">↑</button>
+<div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Enlarged figure">
+  <button id="lbClose" aria-label="Close enlarged figure">✕</button><img id="lbImg" alt="">
+</div>
+
+<script>
+/* =========================================================
+   FIGURES – edit captions / alt text here
+   ========================================================= */
+var FIGS={
+ 'fig22-1':['fig22-1-pressure-waveform.png','Fig. 22.1 – Pressure, flow and volume traces of one breath. Letters A–F mark the key points.','Pressure, flow and volume waveforms with labelled points A to F'],
+ 'fig22-2':['fig22-2-mean-airway-pressure.png','Fig. 22.2 – The shaded area under the pressure curve is the mean airway pressure.','Pressure waveform with shaded area representing mean airway pressure'],
+ 'fig22-3':['fig22-3-prolonged-inspiratory-time.png','Fig. 22.3 – (a) Inspiration ends as flow reaches zero; (b) too-long inspiration creates a pressure plateau and higher mean pressure.','Two panels comparing normal and prolonged inspiratory time'],
+ 'fig22-4':['fig22-4-flow-cycling.png','Fig. 22.4 – Flow cycling: red is inspiration, blue is expiration; the arrow shows the breath ending while flow is still above zero.','Flow waveform showing flow cycling'],
+ 'fig22-5':['fig22-5-gas-trapping.png','Fig. 22.5 – Gas trapping: flow has not returned to zero when the next breath starts (arrow).','Flow waveform demonstrating gas trapping'],
+ 'fig22-6':['fig22-6-et-tube-leak.png','Fig. 22.6 – Endotracheal tube leak: expiratory flow does not fully return to baseline before the next breath.','Flow waveform demonstrating an endotracheal tube leak'],
+ 'fig22-7':['fig22-7-imv.png','Fig. 22.7 – Unsynchronized IMV: yellow arrows show effort adding to the machine breath (very high V\u209C); green arrows show the baby exhaling during machine inspiration.','Intermittent mandatory ventilation tracing with yellow and green arrows'],
+ 'fig22-8':['fig22-8-simv.png','Fig. 22.8 – SIMV: yellow arrows are synchronized machine breaths; red arrows are unassisted spontaneous breaths.','Synchronized IMV tracing'],
+ 'fig22-9':['fig22-9-assist-control.png','Fig. 22.9 – Assist/control: red is a time-cycled breath during apnea; yellow are patient-triggered breaths.','Assist control tracing'],
+ 'fig22-10':['fig22-10-pressure-support-simv.png','Fig. 22.10 – Pressure support blended into SIMV.','Pressure support during SIMV tracing'],
+ 'fig22-11':['fig22-11-pressure-volume-loop.png','Fig. 22.11 – A pressure–volume loop.','Pressure volume loop'],
+ 'fig22-12':['fig22-12-peep-assessment.png','Fig. 22.12 – Judging PEEP with the P–V loop.','P-V loop used to assess PEEP'],
+ 'fig22-13':['fig22-13-overdistension-c20-c.png','Fig. 22.13 – Overdistension shown by a flattened top and the C20/C ratio.','P-V loop showing overdistension and C20/C ratio'],
+ 'fig22-14':['fig22-14-figure-8-loop.png','Fig. 22.14 – Inadequate inspiratory flow gives a figure-8 P–V loop.','Figure of eight pressure volume loop'],
+ 'fig22-15':['fig22-15-flow-volume-loop.png','Fig. 22.15 – A flow–volume loop.','Flow volume loop'],
+ 'fig22-16':['fig22-16-increased-inspiratory-resistance.png','Fig. 22.16 – Higher inspiratory resistance flattens the inspiratory limb.','Flow volume loop with flattened inspiratory limb'],
+ 'fig22-17':['fig22-17-increased-expiratory-resistance.png','Fig. 22.17 – Higher expiratory resistance flattens the expiratory limb.','Flow volume loop with flattened expiratory limb'],
+ 'fig22-18':['fig22-18-bronchodilator-effect.png','Fig. 22.18 – Bronchodilator effect: (a) before treatment, (b) after, with higher flows.','Flow volume loops before and after bronchodilator'],
+ 'fig22-19':['fig22-19-suctioning-needed.png','Fig. 22.19 – Flow–volume loop of an infant who needs suctioning.','Flow volume loop in an infant needing suctioning']
+};
+document.querySelectorAll('[data-fig]').forEach(function(h){
+  var d=FIGS[h.dataset.fig];if(!d)return;
+  var f=document.createElement('figure');f.className='fig';
+  var img=document.createElement('img');
+  img.src='images/'+d[0];img.alt=d[2];img.loading='lazy';img.tabIndex=0;
+  img.onerror=function(){var p=document.createElement('div');p.className='fig-missing';p.setAttribute('role','img');p.setAttribute('aria-label','Figure coming soon');p.innerHTML='<div style="font-size:2rem">🖼️</div><strong>Figure coming soon</strong><small>'+d[0]+'</small>';img.replaceWith(p);};
+  img.addEventListener('click',function(){openLb(img)});
+  img.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();openLb(img);}});
+  var c=document.createElement('figcaption');c.textContent=d[1];
+  f.appendChild(img);f.appendChild(c);h.appendChild(f);
+});
+
+/* Lightbox */
+var lb=document.getElementById('lightbox'),lbImg=document.getElementById('lbImg'),lastFocus=null;
+function openLb(img){lastFocus=document.activeElement;lbImg.src=img.src;lbImg.alt=img.alt;lb.classList.add('open');document.getElementById('lbClose').focus();}
+function closeLb(){lb.classList.remove('open');if(lastFocus)lastFocus.focus();}
+document.getElementById('lbClose').onclick=closeLb;
+lb.addEventListener('click',function(e){if(e.target===lb)closeLb();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&lb.classList.contains('open'))closeLb();});
+
+/* Themes */
+var root=document.documentElement;
+function setTheme(t){root.setAttribute('data-theme',t);try{localStorage.setItem('npg-theme',t);}catch(e){}
+  document.querySelectorAll('[data-theme-btn]').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.themeBtn===t);});}
+document.querySelectorAll('[data-theme-btn]').forEach(function(b){b.onclick=function(){setTheme(b.dataset.themeBtn);};});
+document.getElementById('quickToggle').onclick=function(){setTheme(root.getAttribute('data-theme')==='dark'?'light':'dark');};
+setTheme(root.getAttribute('data-theme')||'light');
+
+/* Sidebar toggle */
+var sb=document.getElementById('sidebar'),nt=document.getElementById('navToggle');
+nt.onclick=function(){var c=sb.classList.toggle('collapsed');nt.setAttribute('aria-expanded',!c);};
+
+/* Progress bar, back-to-top */
+var pb=document.getElementById('progress'),tt=document.getElementById('totop');
+function onScroll(){var h=document.documentElement.scrollHeight-innerHeight,p=h>0?scrollY/h*100:0;
+  pb.style.width=p+'%';pb.setAttribute('aria-valuenow',Math.round(p));tt.classList.toggle('show',scrollY>600);}
+addEventListener('scroll',onScroll,{passive:true});onScroll();
+tt.onclick=function(){scrollTo({top:0});};
+
+/* Active nav + fade-in */
+var links={};document.querySelectorAll('.sidebar a').forEach(function(a){links[a.getAttribute('href').slice(1)]=a;});
+if('IntersectionObserver' in window){
+  var navObs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){
+    Object.values(links).forEach(function(a){a.classList.remove('active');a.removeAttribute('aria-current');});
+    var a=links[e.target.id];if(a){a.classList.add('active');a.setAttribute('aria-current','true');}}});},{rootMargin:'-30% 0px -60% 0px'});
+  var fadeObs=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');fadeObs.unobserve(e.target);}});},{threshold:.05});
+  document.querySelectorAll('section.sec').forEach(function(s){navObs.observe(s);fadeObs.observe(s);});
+}else{document.querySelectorAll('.fade').forEach(function(s){s.classList.add('in');});}
+
+/* Quiz – edit questions here: [question, [options], correctIndex, explanation] */
+var QZ=[
+ ['On a pressure waveform, what does the highest point represent?',['PEEP','PIP','Mean airway pressure'],1,'The peak (A) is PIP; the baseline (B) is PEEP.'],
+ ['Where should the flow sensor sit for accurate graphics?',['Inside the ventilator','Near the tubing exit','At the airway opening'],2,'Proximal placement at the airway opening is critical.'],
+ ['Expiratory flow has not returned to zero before the next breath. What may happen?',['Gas trapping','Overdistension only','Better synchronization'],0,'Not reaching zero suggests gas trapping.'],
+ ['The volume waveform fails to return to baseline on expiration. What does this suggest?',['Endotracheal tube leak','Bronchodilator effect','Higher PEEP'],0,'This is the sign of an ET-tube leak.'],
+ ['A C20/C ratio below 1.0 suggests…',['Adequate PEEP','Overdistension','Normal flow'],1,'The last part of the curve is stiffer, so the lung is over-stretched.'],
+ ['What is the normal delivered tidal volume?',['1–2 mL/kg','4–7 mL/kg','10–15 mL/kg'],1,'Normal delivered V\u209C is 4–7 mL/kg.'],
+ ['Which loop shape suggests inadequate inspiratory flow?',['Figure-8 or cusped P–V loop','Flat expiratory F–V limb','Triangular pressure wave'],0,'Cusping or a figure-8 on the P–V loop means flow is too low.'],
+ ['Which modes sync machine breaths to the baby\u2019s effort?',['Unsynchronized IMV','SIMV','Neither'],1,'SIMV (and assist/control) synchronize with patient effort.']
+];
+var qz=document.getElementById('quiz'),sc=0,answered=0;
+function buildQuiz(){qz.innerHTML='';sc=0;answered=0;
+  QZ.forEach(function(q,i){var d=document.createElement('div');d.className='q';
+    var p=document.createElement('p');p.innerHTML='<strong>'+(i+1)+'. '+q[0]+'</strong>';d.appendChild(p);
+    var o=document.createElement('div');o.className='opts';var fb=document.createElement('div');fb.className='fb';fb.setAttribute('aria-live','polite');
+    q[1].forEach(function(t,j){var b=document.createElement('button');b.className='opt';b.textContent=t;
+      b.onclick=function(){if(d.dataset.done)return;d.dataset.done=1;answered++;
+        var ok=j===q[2];if(ok)sc++;b.classList.add(ok?'right':'wrong');
+        if(!ok)o.children[q[2]].classList.add('right');
+        fb.textContent=(ok?'✅ Correct. ':'❌ Not quite. ')+q[3];upd();};
+      o.appendChild(b);});
+    d.appendChild(o);d.appendChild(fb);qz.appendChild(d);});upd();}
+function upd(){document.getElementById('score').textContent=sc;document.getElementById('total').textContent=answered+' answered of '+QZ.length;}
+document.getElementById('quizReset').onclick=buildQuiz;buildQuiz();
+</script>
+
+<!--
+CLOUDFLARE PAGES DEPLOYMENT
+1. Put this file as index.html at the ROOT of a folder; create an images/ subfolder beside it with the figure PNGs
+   (fig22-1-pressure-waveform.png ... fig22-18-bronchodilator-effect.png, plus fig22-19-suctioning-needed.png).
+2. Cloudflare dashboard > Workers & Pages > Create > Pages > Upload assets. Name the project.
+3. Drag the whole folder in and click Deploy.
+4. Open the *.pages.dev URL and check every figure loads (file names are case-sensitive); missing ones show "Figure coming soon".
+-->
+</body>
+</html>
