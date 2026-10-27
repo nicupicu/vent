@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vaccination Guide For Pediatricians</title>
+<style>
+  :root{
+    --bg:#F0E9DC;
+    --panel:#FFFFFF;
+    --cyan:#2F5C8A;
+    --yellow:#A13E4C;
+    --magenta:#8E7BB5;
+    --blue:#5B8DB8;
+    --grey:#7A7A7A;
+    --red:#A13E4C;
+    --pink-glow: rgba(142, 123, 181, 0.35);
+  }
+  *{box-sizing:border-box; font-weight:700 !important;}
+  body{
+    margin:0;
+    background: #F0E9DC;
+    color:#16233F;
+    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+  header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding: 24px 40px 10px 40px;
+    border-bottom: 1px solid #D9D9D9;
+  }
+  h1{
+    font-size: clamp(21.6px, 3.12vw, 36px);
+    color: var(--cyan);
+    text-shadow: none;
+    letter-spacing: 1px;
+    margin:0;
+    font-weight:700;
+  }
+  .subtitle{
+    color:#5B8DB8; opacity:.7; font-size:14.4px; margin-top:4px; letter-spacing:2px; text-transform:uppercase;
+  }
+  .title-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .open-window-btn{
+    background:#FFFFFF;
+    border:1px solid #D9D9D9;
+    color:var(--cyan);
+    padding:6px 10px;
+    border-radius:999px;
+    font-size:12.5px;
+    letter-spacing:.3px;
+    cursor:pointer;
+    transition:all .15s;
+    box-shadow:none;
+  }
+  .open-window-btn:hover{ border-color:var(--magenta); color:#16233F; }
+  .open-window-btn:focus-visible{ outline:2px solid var(--magenta); outline-offset:2px; }
+  .logo{
+    width:56px;height:56px;border-radius:50%;
+    border:2px solid var(--magenta);
+    box-shadow:0 0 10px var(--magenta), inset 0 0 10px var(--magenta);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:bold;color:var(--magenta);font-size:18.0px;
+    text-shadow:none;
+  }
+  .tabs{
+    display:flex;
+    gap:12px;
+    padding: 16px 40px 0 40px;
+  }
+  .tab-btn{
+    background:transparent;
+    border:1px solid #D9D9D9;
+    color:#6B6E47;
+    padding:10px 20px;
+    border-radius:10px 10px 0 0;
+    font-size:20.3px;
+    letter-spacing:0.5px;
+    cursor:pointer;
+    transition: all .15s;
+  }
+  .tab-btn:hover{ color:#16233F; border-color:var(--magenta); }
+  .tab-btn.active{
+    color: var(--cyan);
+    border-color: var(--cyan);
+    border-bottom-color: transparent;
+    text-shadow: none;
+    box-shadow: 0 -6px 14px -4px rgba(0,255,255,0.35);
+  }
+  .tab-panel{ display:none; }
+  .tab-panel.active{ display:block; }
+
+  .layout{
+    display:grid;
+    grid-template-columns: 220px 1fr;
+    gap: 20px;
+    padding: 20px 40px 60px 40px;
+    align-items:start;
+  }
+  .sidebar{
+    display:flex;
+    flex-direction:column;
+    gap:16px;
+    position:sticky;
+    top:20px;
+  }
+  .vaccine-list{
+    background: var(--panel);
+    border:1px solid #D9D9D9;
+    border-radius:12px;
+    padding:10px;
+    max-height: 460px;
+    overflow-y:auto;
+  }
+  .vaccine-btn{
+    width:100%;
+    text-align:left;
+    background:transparent;
+    border:1px solid transparent;
+    color:#3A3A3A;
+    padding:9px 10px;
+    border-radius:8px;
+    font-size:15.0px;
+    cursor:pointer;
+    margin-bottom:4px;
+    transition: all .15s;
+  }
+  .vaccine-btn:hover{ border-color: var(--magenta); color:#000000; }
+  .vaccine-btn.active{
+    background: rgba(0,255,255,0.08);
+    border-color: var(--cyan);
+    color: #000000;
+    text-shadow:none;
+    box-shadow: 0 0 10px rgba(0,255,255,0.25);
+  }
+  .legend-row{ display:flex; gap:10px; }
+  .legend-tag{
+    flex:1; padding: 10px 8px; border-radius: 8px; text-align:center;
+    font-weight:700; font-size:10.8px; letter-spacing:0.3px; line-height:1.4;
+  }
+  .legend-min{ background: var(--yellow); box-shadow:0 0 10px var(--yellow), 0 0 20px rgba(255,215,0,0.4); color:#F5E6A8; }
+  .legend-max{ background: var(--blue); box-shadow:0 0 10px var(--blue), 0 0 20px rgba(51,170,255,0.4); color:#BFE0F5; }
+
+  .main{
+    background: var(--panel);
+    border-radius: 16px;
+    border:1px solid #D9D9D9;
+    padding: 26px 30px 40px 30px;
+    box-shadow: 0 0 30px rgba(0,0,0,0.6);
+    position:relative;
+    overflow-x:hidden;
+  }
+  .vaccine-title{ font-size:21.6px; color:#000000; text-shadow:none; font-weight:800; margin: 0 0 4px 0; }
+  .vaccine-desc{ font-size:14.4px; color:#6B6E47; margin-bottom:18px; line-height:1.5; }
+  .form-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 18px;
+  }
+  label{
+    display:block; font-size:13.2px; text-transform:uppercase; letter-spacing:1px;
+    color: var(--magenta); text-shadow:0 0 4px rgba(218,112,214,0.5); margin-bottom:6px;
+  }
+  input, select{
+    width:100%; background:#FBF8F2; border:1px solid #D9D9D9; color:#16233F;
+    padding:10px 12px; border-radius:8px; font-size:16.8px; outline:none;
+    transition: box-shadow .2s, border-color .2s;
+  }
+  input:focus, select:focus{ border-color: var(--cyan); box-shadow:0 0 8px rgba(0,255,255,0.5); }
+  #priorDosesFields{ display:grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap:14px; margin-bottom: 18px; }
+  .btn{
+    background: linear-gradient(135deg, #16233F, #0D1420);
+    border: 1px solid #16233F; color: #FFFFFF; text-shadow:none;
+    box-shadow: 0 0 12px rgba(22,35,63,0.5); padding: 12px 26px; border-radius: 10px;
+    font-weight:700; letter-spacing:1px; cursor:pointer; font-size:16.8px;
+    transition: transform .15s, box-shadow .15s;
+  }
+  .btn:hover{ box-shadow: 0 0 18px rgba(22,35,63,0.7); transform: translateY(-1px); }
+  #resultText{ margin: 18px 0 6px 0; color:var(--yellow); text-shadow:0 0 6px rgba(255,215,0,0.5); font-size:16.2px; min-height:20px; line-height:1.5; }
+  #warningText{ color: var(--red); text-shadow:0 0 6px rgba(255,85,102,0.5); font-size:15.0px; margin-top:4px; min-height:16px; }
+
+  :root{ --line:18px; }
+  .dose-table{ width:100%; border-collapse:collapse; margin-top:10px; }
+  .dose-table th, .dose-table td{ text-align:left; padding:10px 14px; border:1px solid #D9D9D9; font-size:16px; }
+  .dose-table th{ background:#16233F; color:#FFFFFF; }
+  .dose-table td:first-child{ font-weight:700; white-space:nowrap; width:28%; }
+
+  .dose-table td:first-child{ white-space:normal; width:auto; }
+  .dose-table th, .dose-table td{ padding:8px 8px; font-size:15px; }
+  .dose-table select, .dose-table input[type=date]{ width:100%; min-width:120px; box-sizing:border-box; font-size:14px; }
+  .dose-table th:nth-child(2), .dose-table td:nth-child(2){ width:110px; }
+  .dose-table th:nth-child(3), .dose-table td:nth-child(3){ width:150px; }
+  .dose-table th:nth-child(4), .dose-table td:nth-child(4){ width:150px; }
+  @media (max-width:700px){
+    .dose-table, .dose-table tbody, .dose-table tr, .dose-table td{ display:block; width:100% !important; box-sizing:border-box; }
+    .dose-table thead{ display:none; }
+    .dose-table tr{ border:1px solid #D9D9D9; border-radius:12px; margin:0 0 12px; padding:6px 0; background:#FFFFFF; }
+    .dose-table td{ border:none !important; padding:5px 14px !important; font-size:16px; }
+    .dose-table td:first-child{ font-weight:700; padding-top:10px !important; }
+    .dose-table td:nth-child(2){ color:#6B6E47; font-size:14.5px; }
+    .dose-table td:nth-child(2)::before{ content:'Normally due: '; }
+    .dose-table td:nth-child(3)::before{ content:'Status'; display:block; font-size:13px; color:#6B6E47; margin-bottom:3px; }
+    .dose-table td:nth-child(4)::before{ content:'Date given (optional)'; display:block; font-size:13px; color:#6B6E47; margin-bottom:3px; }
+    .dose-table select, .dose-table input[type=date]{ width:100% !important; min-width:0 !important; font-size:16px; }
+  }
+  .dose-table-note{ margin-top:8px; font-size:14.5px; color:#6B6E47; }
+  .timeline-wrap{ margin-top: 30px; position:relative; padding-top: calc(195px + var(--extra, 0px)); padding-bottom: 60px; overflow-x:auto; }
+  .zoom-hint{
+    position:absolute; top:70px; left:0; font-size:12.6px; color:#6B6E47; letter-spacing:0.3px;
+  }
+  .timeline-track{
+    position:relative; height: 60px; min-width: 1600px;
+    background: linear-gradient(90deg, #FFEE00, #FFEE00); border-radius: 10px; display:flex; align-items:center; box-shadow: 0 0 14px rgba(255,238,0,0.8), 0 0 28px rgba(255,238,0,0.4);
+  }
+  .tick.expandable{ cursor: zoom-in; }
+  .tick.expandable:hover{ box-shadow: 0 0 10px var(--pink-glow), inset 0 0 6px var(--pink-glow), 0 0 14px rgba(51,170,255,0.5); }
+  .tick.collapsible{ cursor: zoom-out; }
+  .tick{
+    flex: 1 0 auto; min-width: 34px; height: 30px; margin: 0 3px; border-radius: 4px;
+    background: rgba(255,20,200,0.08); border: 1px solid var(--magenta);
+    box-shadow: 0 0 6px var(--pink-glow), inset 0 0 4px var(--pink-glow); position:relative;
+  }
+  .tick.year{ min-width: 48px; height:44px; }
+  .tick-label{ position:absolute; bottom:-22px; left:0; right:0; text-align:center; font-size:12.0px; color:#8E7BB5; opacity:.8; white-space:nowrap; }
+  .marker{ position:absolute; top:calc(-157px - var(--lift, 0px)); transform: translateX(-50%); display:flex; flex-direction:column; align-items:center; z-index:5; }
+  .marker .bar{ width:6px; height:56px; border-radius:3px; }
+  .marker.future .bar{ background: var(--cyan); box-shadow: 0 0 8px var(--cyan), 0 0 20px rgba(0,255,255,0.7); }
+  .marker.past .bar{ background: var(--grey); box-shadow: none; opacity:.6; }
+  .marker .dose-label{ font-size:14.4px; font-weight:700; margin-bottom:calc(14px + var(--lift, 0px)); white-space:nowrap; writing-mode: vertical-rl; text-orientation: upright; letter-spacing:1px; }
+  .marker.future .dose-label{ color: var(--cyan); text-shadow: none; }
+  .marker.past .dose-label{ color:#7A7A7A; }
+  .marker .age-label{ font-size:12.0px; color:#6B6E47; margin-top:4px; white-space:nowrap; }
+  .interval-arrow{
+    position:absolute; top:calc(-34px - var(--lvl, 0) * var(--line)); height:2px; background: var(--yellow);
+    box-shadow: 0 0 6px var(--yellow), 0 0 14px rgba(255,215,0,0.6); z-index:4;
+  }
+  .interval-arrow::after{
+    content:''; position:absolute; right:-1px; top:-5px;
+    border-left: 8px solid var(--yellow); border-top: 5px solid transparent; border-bottom: 5px solid transparent;
+    filter: drop-shadow(0 0 4px var(--yellow));
+  }
+  .interval-text{
+    position:absolute; top:calc(-52px - var(--lvl, 0) * var(--line)); transform: translateX(-50%); font-size:12.0px; font-weight:700;
+    color: var(--yellow); text-shadow:0 0 6px rgba(255,215,0,0.7); white-space:nowrap;
+  }
+  .max-cutoff{
+    position:absolute; top:-56px; bottom:-30px; width:2px; background: var(--blue);
+    box-shadow: 0 0 8px var(--blue), 0 0 20px rgba(51,170,255,0.7); z-index:3;
+  }
+  .max-cutoff .max-label{ position:absolute; top:-70px; left:6px; font-size:12.0px; color: var(--blue); text-shadow:0 0 6px var(--blue); white-space:nowrap; }
+  .invalid-zone{
+    position:absolute; top:0; bottom:0;
+    background: repeating-linear-gradient(45deg, rgba(51,170,255,0.08), rgba(51,170,255,0.08) 6px, rgba(51,170,255,0.02) 6px, rgba(51,170,255,0.02) 12px);
+    border-left: 2px dashed rgba(51,170,255,0.5); z-index:1;
+  }
+  .disclaimer{ margin-top: 30px; font-size:13.2px; color:#7A7A7A; border-top:1px dashed #D9D9D9; padding-top:14px; line-height:1.5; }
+  .disclaimer strong{ color: var(--magenta); }
+
+  /* Special situations tab */
+  .card{
+    background: var(--panel); border:1px solid #D9D9D9; border-radius:14px;
+    padding:22px 24px; margin-bottom:22px; box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    overflow-x:auto;
+  }
+  .age-field{ max-width:260px; }
+  .card h2{
+    font-size:19.2px; color: var(--cyan); text-shadow:0 0 6px rgba(0,255,255,0.6);
+    margin:0 0 12px 0; letter-spacing:0.5px;
+  }
+  .card p, .card li{ font-size:15.6px; color:#3A3A3A; line-height:1.6; }
+  .card ul{ margin:8px 0 8px 18px; padding:0; }
+  .card .source-tag{ font-size:12.6px; color:#6B6E47; margin-top:8px; }
+  table.ref-table{ width:100%; border-collapse: collapse; margin-top:10px; font-size:15.0px; }
+  table.ref-table th, table.ref-table td{
+    border:1px solid #D9D9D9; padding:8px 10px; text-align:left; color:#16233F;
+  }
+  table.ref-table th{ color: var(--magenta); text-shadow:0 0 4px rgba(218,112,214,0.4); }
+  .ivig-result{
+    margin-top:14px; padding:12px 14px; border-radius:10px;
+    background:#FBF8F2; border:1px solid var(--yellow);
+    box-shadow:0 0 10px rgba(255,215,0,0.25); color:var(--yellow); font-size:15.6px; min-height:20px;
+  }
+  .interval-result{
+    margin-top:14px; padding:12px 14px; border-radius:10px;
+    background:#FBF8F2; border:1px solid #3A3A3A; font-size:15.6px; min-height:20px; line-height:1.55;
+  }
+  .interval-result.rule-none{ border-color: var(--cyan); color:#0B2E4F; box-shadow:0 0 10px rgba(0,255,255,0.18); }
+  .interval-result.rule-28{ border-color: var(--yellow); color:#4A3600; box-shadow:0 0 10px rgba(255,215,0,0.2); }
+  .interval-result.rule-oral{ border-color: var(--blue); color:#0B2E4F; box-shadow:0 0 10px rgba(51,170,255,0.2); }
+  .interval-result.rule-sequential{ border-color: var(--red); color:#6B0018; box-shadow:0 0 10px rgba(255,85,102,0.22); }
+  .interval-result strong{ color:#000000; }
+  .day-course-card{ margin-top:24px; background:#FBF8F2; border:1px solid #16233F; border-radius:12px; padding:18px 22px; color:#000000; }
+  .day-course-card h3{ margin:0 0 10px 0; color:#16233F; font-size:19px; }
+  .day-course-card p{ color:#000000; margin:0 0 12px 0; }
+  .day-course-card table{ width:100%; border-collapse:collapse; }
+  .day-course-card th, .day-course-card td{ text-align:left; padding:9px 12px; border-bottom:1px solid #C9C2B2; font-size:16px; color:#000000; }
+  .day-course-card th{ background:#EDE7D8; font-weight:700; }
+  .region-toggle{ display:flex; gap:8px; margin:8px 0 12px 0; flex-wrap:wrap; }
+  .region-btn{ border:1px solid #16233F; background:#FBF8F2; color:#16233F; padding:8px 18px; border-radius:8px; font-weight:700; font-size:15px; cursor:pointer; }
+  .region-btn.active{ background:#16233F; color:#FFFFFF; }
+  .routine-hero{
+    background: linear-gradient(135deg, rgba(0,255,255,0.08), rgba(218,112,214,0.08));
+    border:1px solid rgba(0,255,255,0.2);
+  }
+  .routine-summary{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:14px; margin-bottom:18px;
+  }
+  .routine-stat{
+    background:#FBF8F2; border:1px solid #3A3A3A; border-radius:12px; padding:14px 16px;
+  }
+  .routine-stat .label{
+    font-size:13.2px; color:#6B6E47; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px;
+  }
+  .routine-stat .value{
+    color:#000000; font-size:16.8px; line-height:1.45;
+  }
+  .routine-stat .value, .routine-stat .value *{ color:#000000; }
+  .routine-grid{
+    display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px;
+  }
+  .routine-card{
+    background: var(--panel); border:1px solid #1f1f1f; border-radius:14px; padding:18px 18px 16px 18px;
+    box-shadow: 0 0 18px rgba(0,0,0,0.35);
+  }
+  .routine-card.due-now{ border-color: var(--cyan); box-shadow:0 0 12px rgba(0,255,255,0.22); }
+  .routine-age{
+    display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;
+  }
+  .routine-age-title{ color:var(--cyan); font-size:19.2px; text-shadow:0 0 6px rgba(0,255,255,0.45); }
+  .routine-age-badge{
+    padding:4px 9px; border-radius:999px; font-size:12.0px; font-weight:700; letter-spacing:0.8px;
+    border:1px solid rgba(255,255,255,0.18); color:#16233F; background:#FFFFFF; text-transform:uppercase;
+  }
+  .routine-split{ display:grid; grid-template-columns:1fr; gap:12px; }
+  .routine-pill{
+    display:inline-block; padding:5px 10px; border-radius:999px; font-size:12.0px; font-weight:700;
+    letter-spacing:0.8px; margin-bottom:8px; text-transform:uppercase;
+  }
+  .routine-pill.compulsory{ background:rgba(255,215,0,0.12); color:var(--yellow); border:1px solid rgba(255,215,0,0.32); }
+  .routine-pill.optional{ background:rgba(218,112,214,0.12); color:var(--magenta); border:1px solid rgba(218,112,214,0.32); }
+  .routine-list{ margin:0; padding-left:18px; color:#16233F; font-size:15.6px; line-height:1.55; }
+  .routine-empty{ color:#6f6f6f; font-size:14.4px; }
+  .routine-note-card{ margin-top:18px; }
+  .routine-note-card ul{ margin:10px 0 0 0; padding-left:18px; color:#16233F; line-height:1.6; }
+  @media (max-width: 780px){
+    .layout{ grid-template-columns: 1fr; }
+    header{ padding: 18px 18px 8px 18px; flex-wrap:wrap; gap:10px; }
+    .tabs{
+      padding: 12px 14px 0 14px; gap:8px; overflow-x:auto; flex-wrap:nowrap;
+      -webkit-overflow-scrolling:touch; scrollbar-width:thin;
+    }
+    .tab-btn{ padding:9px 14px; font-size:18.7px; white-space:nowrap; flex:0 0 auto; }
+    .layout{ padding: 14px 14px 40px 14px; gap:14px; }
+    .main{ padding: 16px 14px 26px 14px; }
+    .card{ padding:16px 14px; }
+    .form-grid{ grid-template-columns: 1fr; gap:12px; }
+    #priorDosesFields{ grid-template-columns: 1fr; }
+    .age-field{ max-width:100%; }
+    .routine-summary, .routine-grid{ grid-template-columns: 1fr; }
+    table.ref-table{ font-size:13.8px; }
+    .tick{ min-width:30px; height:34px; }
+    .tick.year{ min-width:42px; height:48px; }
+  }
+  @media (max-width: 420px){
+    .logo{ width:44px; height:44px; font-size:14.4px; }
+    .tab-btn{ padding:8px 11px; font-size:17.2px; }
+
+    /* Timeline diagram shrunk ~50% structurally for phone visibility */
+    :root{ --line:10px; }
+    .timeline-wrap{ padding-top:calc(115px + var(--extra, 0px)); padding-bottom:30px; }
+    .timeline-track{ height:30px; min-width:800px; }
+    .tick{ min-width:17px; height:15px; margin:0 1.5px; border-radius:2px; }
+    .tick.year{ min-width:24px; height:22px; }
+    .tick-label{ font-size:8.4px; bottom:-16px; }
+    .marker{ top:calc(-98px - var(--lift, 0px)); }
+    .marker .bar{ width:3px; height:28px; }
+    .marker .dose-label{ font-size:10.1px; margin-bottom:calc(7px + var(--lift, 0px)); }
+    .marker .age-label{ font-size:8.4px; margin-top:2px; }
+    .interval-arrow{ top:calc(-18px - var(--lvl, 0) * var(--line)); height:1px; }
+    .interval-text{ top:calc(-28px - var(--lvl, 0) * var(--line)); font-size:8.4px; }
+    .max-cutoff{ top:-30px; bottom:-15px; width:1px; }
+    .max-cutoff .max-label{ top:-38px; font-size:8.4px; }
+  }
+  /* v23 layout + print */
+  .age-field input{ flex:1 1 90px !important; width:auto !important; min-width:80px !important; }
+  .age-field select{ flex:0 0 112px !important; width:112px !important; min-width:0 !important; }
+  select{ max-width:100%; text-overflow:ellipsis; }
+  .patient-name{ width:100%; }
+  .print-btn{ width:auto !important; display:inline-block; padding:6px 14px !important; font-size:14px !important; margin:0 0 10px 0 !important; }
+  #printHeader{ display:none; }
+  .hist-card table{ width:100%; }
+  @media print{
+    @page{ margin:12mm; }
+    *{ -webkit-print-color-adjust:exact; print-color-adjust:exact; text-shadow:none !important; }
+    .hist-card{ break-inside:auto !important; }
+    .hist-card table{ table-layout:fixed; width:100%; }
+    .hist-card th:first-child, .hist-card td:first-child{ width:58%; }
+    .hist-card tr{ break-inside:avoid; }
+    .hist-card td, .hist-card th{ white-space:normal; word-break:normal; }
+    body{ background:#fff !important; color:#000 !important; }
+    header, .tabs, .no-print, .print-btn, .print-hide, button, .region-toggle{ display:none !important; }
+    .tab-panel{ display:none !important; }
+    .tab-panel.active{ display:block !important; }
+    .tab-panel > div{ padding:0 !important; max-width:none !important; }
+    .layout{ display:block !important; padding:0 !important; }
+    .main{ padding:0 !important; }
+    .card{ box-shadow:none !important; overflow:visible !important; }
+    .routine-card, .routine-note-card{ break-inside:avoid; }
+    #printHeader{ display:block !important; border-bottom:2px solid #2F5C8A; margin-bottom:14px; padding-bottom:8px; }
+    #printHeader h1{ font-size:20px; margin:0 0 4px 0; text-shadow:none; letter-spacing:0; }
+    #printHeader div{ font-size:13px; margin:2px 0; }
+    #printFooter{ display:block !important; border-top:1px solid #999; margin-top:16px; padding-top:6px; font-size:11px; }
+  }
+  #printFooter{ display:none; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title-row">
+      <h1>Vaccination Guide For Pediatricians</h1>
+      <button type="button" class="open-window-btn" onclick="openInNewWindow()">Open in new window</button>
+    </div>
+    <div class="subtitle">Multi-Vaccine Catch-Up Schedule &middot; Clinical Decision Support</div>
+  </div>
+  <div class="logo">VAX</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" id="tabBtnCalc" onclick="switchTab('calc')">Catch-Up Calculator</button>
+  <button class="tab-btn" id="tabBtnRoutine" onclick="switchTab('routine')">Routine Schedule</button>
+  <button class="tab-btn" id="tabBtnIntegrated" onclick="switchTab('integrated')">Integrated Catch-Up + Routine</button>
+  <button class="tab-btn" id="tabBtnInterval" onclick="switchTab('interval')">Vaccine Interval Checker</button>
+  <button class="tab-btn" id="tabBtnSpecial" onclick="switchTab('special')">Special Situations &amp; Reference</button>
+</div>
+
+<div class="tab-panel active" id="tabCalculator">
+  <div class="layout">
+    <div class="sidebar">
+      <div class="vaccine-list" id="vaccineList"></div>
+      <div class="legend-row">
+        <div class="legend-tag legend-min">MINIMUM INTERVAL IS REPRESENTED BY TRANSVERSE YELLOW LINE</div>
+        <div class="legend-tag legend-max">MAXIMUM AGE FOR VACCINE IS REPRESENTED BY VERTICAL BLUE LINE</div>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="vaccine-title" id="vaccineTitle">Select a vaccine</div>
+      <div class="vaccine-desc" id="vaccineDesc"></div>
+
+      <div id="brandSelectWrap" style="display:none; margin-bottom:16px;">
+        <label for="brandSelect">Vaccine brand / product</label>
+        <select id="brandSelect" onchange="onBrandChange()"></select>
+      </div>
+
+      <div class="form-grid">
+        <div>
+          <label for="ageValue">Current age</label>
+          <div class="age-field" style="display:flex; gap:8px;">
+            <input type="number" id="ageValue" min="0" placeholder="....." style="flex:2">
+            <select id="ageUnit" style="flex:1">
+              <option value="months">months</option>
+              <option value="years">years</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label for="prevDoses">Previous doses received</label>
+          <select id="prevDoses">
+            <option value="0">0 doses</option>
+            <option value="1">1 dose</option>
+            <option value="2">2 doses</option>
+            <option value="3">3 doses</option>
+            <option value="4">4 doses</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="priorDosesFields"></div>
+
+      <button class="btn" onclick="generateSchedule()">Generate Schedule</button>
+      <div id="resultText"></div>
+      <div id="warningText"></div>
+
+      <div class="day-course-card" id="dayCourseCard" style="display:none;"></div>
+      <div class="timeline-wrap" style="display:none;">
+        <div class="timeline-track" id="timelineTrack"></div>
+              </div>
+
+      <div class="region-toggle" id="catchupModeToggle"><button type="button" class="region-btn active" id="catchupBtnEgypt" onclick="setCatchupRegion('EGYPT')">Egypt (default)</button><button type="button" class="region-btn" id="catchupBtnWho" onclick="setCatchupRegion('WHO')">WHO</button><button type="button" class="region-btn" id="catchupBtnCdc" onclick="setCatchupRegion('CDC')">CDC (US)</button></div><p id="catchupModeNote" class="dose-table-note" style="margin-top:0;"><strong>Before choosing mode:</strong> some catch-up rules differ by source, especially rotavirus age cutoffs, measles/MMR start age, Hib catch-up, and DTP/booster handling. Choose the mode that matches your reference before using the plan.</p><div class="disclaimer">
+        <strong>Disclaimer:</strong> This tool is a clinical decision-support aid based on generalized ACIP/CDC-style catch-up guidance for healthy children. Brand-specific product differences (e.g., Hib, Rotavirus, HPV formulations), high-risk/immunocompromised modifiers, and national schedule variations are NOT fully modeled. Always confirm against official national/CDC schedules and product inserts before administering.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tabRoutine">
+  <div style="padding: 10px 40px 60px 40px; max-width:1000px;">
+
+    <div class="card">
+      <h2>Routine Vaccination Schedule</h2>
+      <div class="region-toggle">
+        <button type="button" class="region-btn active" id="routineBtnEgypt" onclick="setRoutineRegion('EGYPT')">Egypt (national)</button>
+        <button type="button" class="region-btn" id="routineBtnWho" onclick="setRoutineRegion('WHO')">WHO</button>
+        <button type="button" class="region-btn" id="routineBtnCdc" onclick="setRoutineRegion('CDC')">CDC (US)</button>
+      </div>
+      <p id="routineIntro">Egypt national routine schedule (MOHP compulsory vaccines, birth to 18 months; optional extras listed separately). Enter the child's age to display the next routine doses by age in a clear timeline. WHO boosters that Egypt does not give as compulsory are on the WHO tab.</p>
+      <div class="form-grid" style="margin-top:10px;">
+        <div>
+          <label for="routineAgeValue">Current age</label>
+          <div class="age-field" style="display:flex; gap:8px;">
+            <input type="number" id="routineAgeValue" min="0" value="4" placeholder="....." style="flex:2">
+            <select id="routineAgeUnit" style="flex:1">
+              <option value="months" selected>months</option>
+              <option value="years">years</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn" style="width:100%; margin-top:0;" onclick="renderRoutineSchedule()">Show Next Routine Doses</button>
+        </div>
+      </div>
+      <div class="source-tag" id="routineSource">Compulsory schedule source: Egyptian Ministry of Health and Population compulsory table (Basic Vaccination Guide, updated 22/2/2021; consistent with the EHC nursing-education table, 2025, with Salk at 2, 4 and 6 months). Optional schedule source: the “Extra Vaccines” section in Basic Vaccination Guide plus the age list in catch up vaccines.pdf. Confirm current MOHP policy before clinical use.</div>
+    </div>
+
+    <div id="routineScheduleOutput"></div>
+
+  </div>
+</div>
+
+<div class="tab-panel" id="tabIntegrated">
+  <div style="padding: 10px 40px 60px 40px; max-width:1100px;">
+    <div class="card">
+      <h2>Integrated Catch-Up + Routine Vaccine Plan</h2>
+      <p>Choose a routine schedule, enter the child's date of birth or age, select the visit date, then change only the vaccines that were not received. The output is a personal schedule in age boxes: missed doses are caught up and integrated with the routine schedule.</p>
+      <div class="region-toggle"><button type="button" class="region-btn active" id="integratedBtnEgypt" onclick="setIntegratedRegion('EGYPT')">Egypt (national)</button><button type="button" class="region-btn" id="integratedBtnWho" onclick="setIntegratedRegion('WHO')">WHO</button><button type="button" class="region-btn" id="integratedBtnCdc" onclick="setIntegratedRegion('CDC')">CDC (US)</button></div>
+      <div id="whoIntegratedOptions" class="card" style="display:none; margin:14px 0 0; padding:14px;"><h3 style="margin-top:0;">WHO programme options</h3><div class="form-grid"><div><label>Polio</label><div class="dose-table-note">Preferred WHO schedule: 3 bOPV + 2 IPV (IPV at 14 weeks and at least 4 months later).</div></div><div><label>PCV</label><div class="dose-table-note">Default: 2 primary doses + booster at 9–18 months (2p+1).</div></div><div><label for="whoRotaProduct">Rotavirus product</label><select id="whoRotaProduct" onchange="renderIntegratedChecklist()"><option value="2">2-dose product</option><option value="3">3-dose product</option></select></div></div></div>
+      <div class="form-grid" style="margin-top:10px;"><div><label for="integratedDob">Date of birth (optional)</label><input type="date" id="integratedDob" onchange="onIntegratedDobChange()"></div><div><label for="integratedAgeValue">Or enter current age</label><div class="age-field" style="display:flex; gap:8px;"><input type="number" id="integratedAgeValue" min="0" step="0.1" placeholder="....." style="flex:2" oninput="syncIntegratedDobFromAge()"><select id="integratedAgeUnit" style="flex:1" onchange="syncIntegratedDobFromAge()"><option value="months" selected>months</option><option value="years">years</option></select></div></div><div><label for="integratedVisitDate">Visit date</label><input type="date" id="integratedVisitDate" onchange="onIntegratedVisitChange()"></div><div><label for="integratedFluSeason">Influenza vaccine indicated this season?</label><select id="integratedFluSeason" onchange="document.getElementById('integratedFluHint').style.display=this.value==='yes'?'block':'none'"><option value="no" selected>No / not now</option><option value="yes">Yes — plan this season</option></select><div class="dose-table-note" id="integratedFluHint" style="display:none; color:#A13E4C;">Confirm the current-season product and local timing.</div></div><div><label for="integratedFluHistory">Influenza doses before this season</label><select id="integratedFluHistory"><option value="unk" selected>Unknown</option><option value="0">0</option><option value="1">1</option><option value="2">2 or more</option></select></div><div><label for="integratedCap">Max injections per visit</label><select id="integratedCap"><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option></select></div></div>
+      <p class="dose-table-note">Date of birth determines age on the visit date; if blank, the manual age is used. The checklist lists only doses that should already have been given by the child's age — all start as Received. Enter the date given (optional) to let the app check minimum age and interval; undated doses are assumed valid.</p>
+    </div>
+    <div class="card"><h2>Documented doses</h2><div id="integratedChecklist"></div></div>
+    <div class="card"><button class="btn" onclick="buildIntegratedPlan()">Build Full Catch-Up + Routine Plan</button><div id="integratedPlan" style="margin-top:18px;"></div></div>
+  </div>
+</div>
+
+<div class="tab-panel" id="tabInterval">
+  <div style="padding: 10px 40px 60px 40px; max-width:900px;">
+
+    <div class="card routine-hero">
+      <h2>Interval Between Any Two Different Vaccines</h2>
+      <p>Use this when catching up a delayed schedule and you need to know whether <strong>two different vaccines</strong> (not two doses of the <em>same</em> vaccine) need any spacing between them. For repeat doses of the same vaccine series, use the Catch-Up Calculator tab instead.</p>
+      <div class="form-grid" style="margin-top:10px;">
+        <div>
+          <label for="intervalVaxA">Vaccine A</label>
+          <select id="intervalVaxA" onchange="checkVaccineInterval()"></select>
+        </div>
+        <div>
+          <label for="intervalVaxB">Vaccine B</label>
+          <select id="intervalVaxB" onchange="checkVaccineInterval()"></select>
+        </div>
+      </div>
+      <button class="btn" onclick="checkVaccineInterval()">Check Required Interval</button>
+      <div class="interval-result" id="intervalResult"></div>
+      <div class="source-tag">Source: CDC ACIP General Best Practice Guidelines for Immunization &mdash; live-vaccine spacing rule (Table 2-4/3), simultaneous-administration principle, and the documented PCV/PPSV23 sequencing exception.</div>
+    </div>
+
+    <div class="card">
+      <h2>Quick Reference &mdash; Spacing Rules at a Glance</h2>
+      <table class="ref-table">
+        <tr><th>Combination</th><th>Rule</th></tr>
+        <tr><td>Two live, non-oral vaccines (e.g. MMR + Yellow Fever)</td><td>Same day, or &ge;28 days apart. Otherwise the later dose is invalid and must be repeated.</td></tr>
+        <tr><td>Any live-oral vaccine (OPV, oral Rotavirus, oral Typhoid TY21a) + anything else</td><td>No minimum interval &mdash; oral live vaccines are exempt from the 28-day rule.</td></tr>
+        <tr><td>PCV + PPSV23 (either order)</td><td>Not simultaneous: PCV first then PPSV23 &ge;8 weeks later, or if PPSV23 first then PCV &ge;1 year later.</td></tr>
+        <tr><td>Any inactivated vaccine + any other vaccine (live-injectable or inactivated)</td><td>No minimum interval &mdash; can be co-administered at the same visit, different sites.</td></tr>
+      </table>
+      <div class="source-tag">Same source as above.</div>
+    </div>
+
+  </div>
+</div>
+
+<div class="tab-panel" id="tabSpecial">
+  <div style="padding: 10px 40px 60px 40px; max-width:900px;">
+
+    <div class="card">
+      <h2>Vaccination of Preterm Infants</h2>
+      <ul>
+        <li>Preterm = born &lt;37 weeks gestation; extremely preterm = &lt;28 weeks gestation.</li>
+        <li>Vaccinate according to <strong>chronological age</strong> (time since birth), not corrected/gestational age &mdash; with the same doses and schedule as full-term infants.</li>
+        <li>Despite immunological immaturity, preterm infants generally respond adequately to vaccines.</li>
+        <li>Medically stable infants who are ready for hospital discharge (regardless of weight) can generally receive routine vaccines at the appropriate chronological age.</li>
+        <li>Hepatitis B birth dose: if birth weight &lt;2000 g and the mother is HBsAg-negative, the birth dose may be delayed until 1 month of chronological age or hospital discharge, whichever comes first; if HBsAg status is unknown or positive, HBIG plus HepB vaccine should not be delayed.</li>
+      </ul>
+      <div class="source-tag">Source: Vaccination of Preterm Infants (Adel Reyad) &amp; Catch-Up Immunization (Dr. Osama Hussein).</div>
+    </div>
+
+    <div class="card">
+      <h2>IVIG / Antibody Product &rarr; Live Vaccine Interval Calculator</h2>
+      <p>Select the indication and IVIG dose to see the recommended minimum wait before giving <strong>measles- or varicella-containing</strong> vaccine (MMR, MMRV, Varicella).</p>
+      <div class="form-grid" style="margin-top:10px;">
+        <div>
+          <label for="ivigIndication">Indication / product</label>
+          <select id="ivigIndication" onchange="updateIvigInterval()">
+            <option value="itp1000">ITP &ndash; 1000 mg/kg</option>
+            <option value="itp400">ITP &ndash; 400 mg/kg</option>
+            <option value="kawasaki">Kawasaki disease &ndash; 2000 mg/kg</option>
+            <option value="replacement">Replacement therapy for immune deficiency &ndash; 400 mg/kg</option>
+            <option value="varicella_pep">Postexposure varicella prophylaxis &ndash; 400 mg/kg</option>
+            <option value="measles_pep">Postexposure measles prophylaxis (immunocompromised contact) &ndash; 400 mg/kg</option>
+          </select>
+        </div>
+        <div>
+          <label for="ivigDate">Date IVIG was given (optional)</label>
+          <input type="date" id="ivigDate">
+        </div>
+      </div>
+      <button class="btn" onclick="updateIvigInterval()">Calculate Earliest Vaccination Date</button>
+      <div class="ivig-result" id="ivigResult"></div>
+      <div class="source-tag">Source: Recommended interval between IVIG and vaccinations (Dr. Sultan Jameel Alibrahim), citing CDC ACIP General Best Practice Guidelines.</div>
+    </div>
+
+    <div class="card">
+      <h2>Vaccine Storage &amp; Handling &mdash; Quick Reference</h2>
+      <table class="ref-table">
+        <tr><th>Category</th><th>General storage</th><th>Key caution</th></tr>
+        <tr><td>Most inactivated / subunit vaccines (DTaP, HepA, HepB, Hib, PCV, IPV, HPV, Influenza injectable)</td><td>Refrigerator, 2&ndash;8&deg;C (36&ndash;46&deg;F)</td><td>Never freeze &mdash; freezing destroys aluminum-adjuvanted vaccine potency</td></tr>
+        <tr><td>Live attenuated (MMR, Varicella, MMRV)</td><td>Refrigerator or freezer depending on product/manufacturer</td><td>Protect from light; reconstitute per manufacturer instructions immediately before use</td></tr>
+        <tr><td>Live oral (Rotavirus, OPV)</td><td>Refrigerator, 2&ndash;8&deg;C</td><td>Do not freeze; follow manufacturer beyond-use timelines once opened</td></tr>
+        <tr><td>Diluents</td><td>May be stored at room temperature or refrigerated per product insert</td><td>Use only the diluent supplied by the same manufacturer</td></tr>
+      </table>
+      <p style="margin-top:10px; font-size:13.8px; color:#7A7A7A;">This table is a generalized summary. Exact storage temperatures, diluent pairing, and beyond-use dating are brand-specific &mdash; always verify against the current package insert and your national Vaccine Storage &amp; Handling Guide.</p>
+      <div class="source-tag">Source: Vaccine Storage and Handling Guide (National Center for Immunization and Respiratory Disease).</div>
+    </div>
+
+    <div class="card">
+      <h2>Post-Splenectomy / Asplenia (Including Sickle Cell Disease)</h2>
+      <ul>
+        <li>Anatomic or functional asplenia carries a lifelong high risk of overwhelming infection from encapsulated organisms &mdash; <em>S. pneumoniae</em>, <em>N. meningitidis</em>, and <em>H. influenzae</em> type b.</li>
+        <li><strong>Elective/planned splenectomy:</strong> give pneumococcal, meningococcal, and Hib vaccines &ge;14 days before surgery whenever possible.</li>
+        <li><strong>Emergency or already-performed splenectomy:</strong> give the same vaccines as soon as the patient is medically stable after the procedure &mdash; do not wait for an elective window.</li>
+        <li><strong>Pneumococcal:</strong> one dose of PCV (13- or higher-valent) if not previously received as an adult, followed by PPSV23 &ge;8 weeks later, then a PPSV23 booster 5 years after that first PPSV23 dose.</li>
+        <li><strong>Meningococcal:</strong> complete the MenACWY and MenB series; because the risk is lifelong, booster doses are continued indefinitely (not a one-time series).</li>
+        <li><strong>Hib:</strong> one dose for any unimmunized asplenic patient &gt;59 months of age, or for anyone &ge;15 months old who is unimmunized at the time of splenectomy.</li>
+        <li><strong>Influenza:</strong> annual vaccination.</li>
+      </ul>
+      <div class="source-tag">Source: CDC &ldquo;Altered Immunocompetence&rdquo; and Adult Immunization Schedule notes (2026), ACIP General Best Practice Guidelines.</div>
+    </div>
+
+    <div class="card">
+      <h2>Immunomodulator / Biologic Therapy (e.g. Tocilizumab/Actemra, Anakinra)</h2>
+      <ul>
+        <li>Tocilizumab (anti-IL-6) and anakinra (anti-IL-1) are both classed as immunosuppressive biologic therapies for vaccination purposes, in the same category as other TNF-alpha and interleukin inhibitors.</li>
+        <li><strong>Live vaccines</strong> (MMR, MMRV, Varicella, Zoster [live formulation], Rotavirus, Yellow Fever, live intranasal influenza, BCG, OPV): avoid while on active therapy. Give &ge;4 weeks <em>before</em> starting the biologic, or wait until &ge;4 weeks <em>after</em> stopping it. Some manufacturer/travel-medicine sources are more conservative and use a 3-month post-cessation buffer &mdash; use the longer interval if there is any uncertainty about residual immune effect.</li>
+        <li><strong>Inactivated vaccines</strong> (PCV/PPSV23, HepA/B, Tdap, IPV, HPV, injectable influenza, RZV/Shingrix, injectable COVID-19): can be given during therapy, but the immune response may be reduced. When feasible, give &ge;2 weeks before starting the biologic for the best antibody response.</li>
+        <li>Update the patient's full routine and risk-based schedule (including annual influenza and, if age-eligible, Shingrix) before starting biologic therapy whenever the clinical situation allows.</li>
+      </ul>
+      <div class="source-tag">Source: Australian Immunisation Handbook (2026) &ndash; biologic therapy vaccination timing table; tocilizumab prescribing information (AHFS DI, 2026).</div>
+    </div>
+
+    <div class="card">
+      <h2>Immunosuppression &mdash; High-Dose Systemic Steroids</h2>
+      <ul>
+        <li><strong>Threshold considered immunosuppressive:</strong> &ge;20 mg/day of prednisone (or equivalent) for adults/children &gt;10 kg, or &ge;2 mg/kg/day for children, given for &ge;14 days.</li>
+        <li><strong>Below this threshold</strong> &mdash; short courses (&lt;14 days), low-to-moderate doses, alternate-day short-acting regimens, physiologic replacement dosing, or topical/inhaled/intra-articular routes &mdash; there is no vaccine restriction; live and inactivated vaccines can be given on the routine schedule.</li>
+        <li><strong>At or above the threshold:</strong> avoid live vaccines during therapy. Wait at least 1 month after stopping high-dose steroid therapy before giving any live vaccine.</li>
+        <li>No interval is required before <em>starting</em> steroids after a vaccine, and inactivated vaccines never need to be delayed around steroid use &mdash; only live-vaccine timing is affected.</li>
+      </ul>
+      <div class="source-tag">Source: CDC ACIP General Best Practice Guidelines for Immunization &mdash; Altered Immunocompetence chapter; CDC Yellow Book 2026, Box 2.2.2.</div>
+    </div>
+
+    <div class="card">
+      <h2>Post-Plasmapheresis / Plasma Exchange</h2>
+      <ul>
+        <li>There is no single numbered ACIP interval table specifically for plasmapheresis (unlike the blood-product tables below) &mdash; the guidance here reflects the general immunologic principle rather than one specific citation, so treat it as a practical framework rather than a fixed rule.</li>
+        <li>Plasma exchange removes circulating antibody, including recently vaccine-induced antibody, so a live vaccine given shortly before a plasmapheresis course may have its protective response blunted or removed.</li>
+        <li><strong>Practical approach:</strong> avoid vaccinating in the 24&ndash;48 hours immediately before a scheduled plasmapheresis session.</li>
+        <li>If a live vaccine was recently given, ideally delay the start of a plasma exchange course until &ge;2 weeks after vaccination when the treatment plan allows.</li>
+        <li>If plasmapheresis has already been completed, wait until the exchange course is finished, then reassess serologic status (where feasible) or apply standard antibody-blood-product intervals before giving live vaccines.</li>
+      </ul>
+      <div class="source-tag">Source: general immunologic principle from CDC/ACIP antibody-blood-product interaction guidance; no dedicated numbered plasmapheresis table was located &mdash; verify locally with hematology/nephrology before acting.</div>
+    </div>
+
+    <div class="card">
+      <h2>Pre- and Post-Organ Transplantation</h2>
+      <ul>
+        <li><strong>Pre-transplant (candidate evaluation):</strong> complete routine and catch-up vaccination as early as possible during work-up, before immunosuppression starts.</li>
+        <li><strong>Live vaccines</strong> (MMR, Varicella, Rotavirus, Yellow Fever, BCG, OPV, live Zoster): give &ge;4 weeks before transplantation; avoid live vaccines if transplant is expected within 4 weeks.</li>
+        <li><strong>Inactivated/subunit/toxoid vaccines:</strong> give &ge;2 weeks before transplant for the strongest antibody response.</li>
+        <li>Priority pre-transplant vaccines: complete or verify HepB series with post-vaccination anti-HBs titer, HepA series, pneumococcal (PCV plus PPSV23), meningococcal per risk factors, and Tdap.</li>
+        <li><strong>Post-transplant:</strong> avoid vaccination in the immediate post-transplant period, when immunosuppression is most intense and the risk of a blunted response (or of triggering rejection-related concerns) is highest.</li>
+        <li>Live vaccines are generally <strong>contraindicated</strong> after transplantation except in specific, individualized circumstances.</li>
+        <li>Resume inactivated vaccines once maintenance (lower-intensity) immunosuppression is reached &mdash; typically <strong>3&ndash;6 months post-transplant</strong>; influenza and COVID-19 vaccines can often be given earlier, as soon as 1 month post-transplant, if there is significant local disease activity.</li>
+        <li>Overall target for optimal timing across current guidelines: vaccinate &ge;2 weeks pre-transplant OR &ge;3 months post-transplant, avoiding periods of pulse immunosuppression or active rejection.</li>
+      </ul>
+      <div class="source-tag">Source: IDSA 2025 Guidelines on Vaccines for Immunocompromised Persons; Stanford Guidelines for Vaccination of Adult Solid Organ Transplant Candidates/Recipients (2022); CDC Yellow Book 2026.</div>
+    </div>
+
+    <div class="card">
+      <h2>Post Blood Product Transfusion (Including Exchange Transfusion)</h2>
+      <ul>
+        <li>These intervals apply specifically to <strong>live measles- or varicella-containing vaccines</strong> (MMR, MMRV, Varicella) &mdash; inactivated vaccines never need to be delayed for this reason.</li>
+        <li>Washed red blood cells: <strong>no interval</strong> needed (negligible IgG content).</li>
+        <li>RBCs with adenine-saline added: <strong>3 months</strong>.</li>
+        <li>Packed RBCs (hematocrit &asymp;65%) or whole blood: <strong>6 months</strong>.</li>
+        <li>Plasma or platelet products: <strong>7 months</strong>.</li>
+        <li>IVIG: interval depends on the dose/indication, roughly <strong>8&ndash;11 months</strong> for higher-dose indications &mdash; see the IVIG interval calculator card above for the exact per-indication figure.</li>
+        <li><strong>Exchange transfusion</strong> (e.g. neonatal double-volume exchange for hyperbilirubinemia or hemolytic disease) is not given its own separate numbered interval in general ACIP guidance; because it involves large-volume whole-blood/plasma exposure, the same whole-blood/plasma principle is applied in practice &mdash; defer live vaccines for at least <strong>6 months</strong> (up to 7 if the exchange was primarily plasma) after the procedure.</li>
+        <li>If a live vaccine was given first, wait &ge;2 weeks before giving any antibody-containing blood product when possible; if the product is given sooner, either repeat the vaccine after the interval above or check serology and revaccinate if seronegative.</li>
+      </ul>
+      <div class="source-tag">Source: CDC ACIP General Best Practice Guidelines for Immunization, Table 2-4/3 (Blood products and antibody-containing products); CDC Pinkbook, Measles chapter (2026).</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===================== Tabs =====================
+const VACCINE_TYPES = {
+  bcg:         ['BCG', 'live-injectable'],
+  cholera:     ['Cholera (Dukoral)', 'inactivated'],
+  covid19:     ['COVID-19', 'inactivated'],
+  dengue:      ['Dengue (Dengvaxia)', 'live-injectable'],
+  dtap_cdc:    ['DTaP / Tdap / Td – CDC', 'inactivated'],
+  dtap_who:    ['DTaP / DT / Td – WHO (Egypt)', 'inactivated'],
+  hepa:        ['Hepatitis A', 'inactivated'],
+  hepb:        ['Hepatitis B', 'inactivated'],
+  hib:         ['Hib', 'inactivated'],
+  hpv:         ['HPV', 'inactivated'],
+  influenza:   ['Influenza (injectable)', 'inactivated'],
+  ipv:         ['Poliovirus – injectable (IPV/Salk)', 'inactivated'],
+  menacwy:     ['Meningococcal ACWY', 'inactivated'],
+  menb:        ['Meningococcal B', 'inactivated'],
+  mmr:         ['MMR', 'live-injectable'],
+  opv:         ['Poliovirus – oral (OPV/Sabin)', 'live-oral'],
+  pcv:         ['Pneumococcal conjugate (PCV)', 'pcv'],
+  ppsv23:      ['Pneumococcal polysaccharide (PPSV23)', 'ppsv'],
+  rabiespre:   ['Rabies (pre-exposure)', 'inactivated'],
+  rotavirus:   ['Rotavirus (oral)', 'live-oral'],
+  tbe:         ['Tick-Borne Encephalitis', 'inactivated'],
+  tetanus_toxoid: ['Tetanus toxoid (TT)', 'inactivated'],
+  typhoidiv:   ['Typhoid – parenteral Vi', 'inactivated'],
+  typhoidoral: ['Typhoid – oral TY21a', 'live-oral'],
+  varicella:   ['Varicella', 'live-injectable'],
+  yellowfever: ['Yellow Fever', 'live-injectable']
+};
+
+function populateIntervalDropdowns(){
+  const optionsHtml = Object.entries(VACCINE_TYPES)
+    .sort((a,b) => a[1][0].localeCompare(b[1][0]))
+    .map(([key, [label]]) => `<option value="${key}">${label}</option>`)
+    .join('');
+  const selA = document.getElementById('intervalVaxA');
+  const selB = document.getElementById('intervalVaxB');
+  if(!selA || !selB) return;
+  selA.innerHTML = optionsHtml;
+  selB.innerHTML = optionsHtml;
+  if(selB.options.length > 1) selB.selectedIndex = 1;
+}
+
+function checkVaccineInterval(){
+  const box = document.getElementById('intervalResult');
+  if(!box) return;
+  const keyA = document.getElementById('intervalVaxA').value;
+  const keyB = document.getElementById('intervalVaxB').value;
+  box.className = 'interval-result';
+
+  if(!keyA || !keyB){ box.innerHTML = 'Select two vaccines to compare.'; return; }
+  if(keyA === keyB){
+    box.classList.add('rule-sequential');
+    box.innerHTML = 'These are the same vaccine — this tool only checks spacing between <em>different</em> vaccines. For repeat doses of the same series, use the Catch-Up Calculator tab.';
+    return;
+  }
+
+  const [labelA, typeA] = VACCINE_TYPES[keyA];
+  const [labelB, typeB] = VACCINE_TYPES[keyB];
+  const types = [typeA, typeB].sort();
+
+  if((typeA === 'pcv' && typeB === 'ppsv') || (typeA === 'ppsv' && typeB === 'pcv')){
+    box.classList.add('rule-sequential');
+    box.innerHTML = `<strong>${labelA} + ${labelB}:</strong> not interchangeable and not given simultaneously. Give PCV first, then PPSV23 ≥ 8 weeks later. If PPSV23 was already given first, wait ≥ 1 year before giving PCV.`;
+    return;
+  }
+
+  const isLiveOral = t => t === 'live-oral';
+  const isLiveInjectable = t => t === 'live-injectable';
+
+  if(isLiveOral(typeA) || isLiveOral(typeB)){
+    let extra = '';
+    const oralRotaPair = (keyA === 'opv' && keyB === 'rotavirus') || (keyA === 'rotavirus' && keyB === 'opv');
+    if(oralRotaPair){
+      extra = ' Note: co-administering OPV and oral rotavirus vaccine on the <em>same day</em> is permitted with no mandatory interval, but published data show somewhat lower rotavirus vaccine immunogenicity when given simultaneously versus staggered by ≥1 day — stagger them if the visit schedule allows, though this is a preference, not a requirement.';
+    }
+    box.classList.add('rule-oral');
+    box.innerHTML = `<strong>${labelA} + ${labelB}:</strong> no minimum interval required. Live oral vaccines are exempt from the standard 28-day live-vaccine spacing rule and can be given any time relative to other vaccines, live or inactivated, including the same day.${extra}`;
+    return;
+  }
+
+  if(isLiveInjectable(typeA) && isLiveInjectable(typeB)){
+    box.classList.add('rule-28');
+    box.innerHTML = `<strong>${labelA} + ${labelB}:</strong> both are live, non-oral vaccines. Give on the <em>same day</em>, or separate by at least <strong>28 days (4 weeks)</strong>. A dose given less than 28 days after the other (and not same-day) is not valid and should be repeated ≥28 days later.`;
+    return;
+  }
+
+  box.classList.add('rule-none');
+  box.innerHTML = `<strong>${labelA} + ${labelB}:</strong> no minimum interval required. These can be given at the same visit (different injection sites/limbs) or spaced any distance apart, with no reduction in effectiveness for either vaccine.`;
+}
+
+let catchupRegion='EGYPT';
+
+function setCatchupRegion(region){
+  catchupRegion = region;
+  ['Egypt','Who','Cdc'].forEach(function(k){ var el=document.getElementById('catchupBtn'+k); if(el) el.classList.remove('active'); });
+  var active=document.getElementById('catchupBtn'+(region==='EGYPT'?'Egypt':region==='WHO'?'Who':'Cdc')); if(active) active.classList.add('active');
+  var note=document.getElementById('catchupModeNote');
+  if(note){
+    if(region==='CDC') note.innerHTML='<strong>CDC mode:</strong> ACIP-style catch-up logic is used. Rotavirus first-dose cutoff and 8-month maximum apply; MMR catch-up starts at 12 months.';
+    else if(region==='WHO') note.innerHTML='<strong>WHO mode:</strong> WHO-style differences are applied where they differ clearly from CDC, including measles/MMR timing, rotavirus upper age handling, and simplified Hib/DTP patterns.';
+    else note.innerHTML='<strong>Egypt mode:</strong> starts from WHO-style catch-up where Egypt differs from CDC. Confirm brand-specific products and local MOHP policy before vaccinating.';
+  }
+}
+
+function switchTab(tab){
+  document.getElementById('tabCalculator').classList.toggle('active', tab==='calc');
+  document.getElementById('tabRoutine').classList.toggle('active', tab==='routine');
+  document.getElementById('tabIntegrated').classList.toggle('active', tab==='integrated');
+  document.getElementById('tabInterval').classList.toggle('active', tab==='interval');
+  document.getElementById('tabSpecial').classList.toggle('active', tab==='special');
+  document.getElementById('tabBtnCalc').classList.toggle('active', tab==='calc');
+  document.getElementById('tabBtnRoutine').classList.toggle('active', tab==='routine');
+  document.getElementById('tabBtnIntegrated').classList.toggle('active', tab==='integrated');
+  document.getElementById('tabBtnInterval').classList.toggle('active', tab==='interval');
+  document.getElementById('tabBtnSpecial').classList.toggle('active', tab==='special');
+  if(tab==='routine') renderRoutineSchedule();
+  if(tab==='integrated') renderIntegratedChecklist();
+  if(tab==='interval') checkVaccineInterval();
+}
+
+const ROUTINE_SCHEDULE_EGYPT = [
+  { ageMonths:0, label:'At birth', compulsory:['Hepatitis B birth dose', 'Sabin (OPV) birth dose', 'BCG'], optional:[] },
+  { ageMonths:2, label:'2 months', compulsory:['Sabin (OPV) first dose', 'Pentavalent first dose (DTP + HepB + Hib)', 'Salk (IPV) first dose'], optional:['Rotavirus first dose', 'Pneumococcal conjugate (PCV) first dose'] },
+  { ageMonths:4, label:'4 months', compulsory:['Sabin (OPV) second dose', 'Pentavalent second dose (DTP + HepB + Hib)', 'Salk (IPV) second dose'], optional:['Rotavirus second dose', 'Pneumococcal conjugate (PCV) second dose'] },
+  { ageMonths:6, label:'6 months', compulsory:['Sabin (OPV) third dose', 'Pentavalent third dose (DTP + HepB + Hib)', 'Salk (IPV) third dose'], optional:['Rotavirus third dose if using a 3-dose product', 'Pneumococcal conjugate (PCV) third dose', 'Influenza can start from this age and is then given annually'] },
+  { ageMonths:9, label:'9 months', compulsory:['Sabin (OPV) fourth dose'], optional:['Meningococcal vaccine may begin in infancy on optional schedules'] },
+  { ageMonths:12, label:'12 months', compulsory:['Sabin (OPV) fifth dose', 'MMR first dose'], optional:['Pneumococcal conjugate (PCV) booster, typically 12–15 months', 'Varicella first dose, typically 12–15 months', 'Hepatitis A first dose can start from 12 months'] },
+  { ageMonths:18, label:'18 months', compulsory:['Sabin (OPV) booster', 'MMR second dose', 'DTP booster'], optional:['Hib booster (optional; listed in the Hib section of the guide, not in the compulsory table)', 'Varicella first dose if not already given', 'Hepatitis A first dose if not already given'] },
+  { ageMonths:24, label:'24 months', compulsory:[], optional:['Hepatitis A second dose'] },
+];
+
+const ROUTINE_RECURRING_NOTES_EGYPT = [
+  'Compulsory schedule = Egyptian MOHP table (birth to 18 months): Pentavalent + Salk (IPV) at 2, 4, 6 months; Sabin (OPV) at birth, 2, 4, 6, 9, 12, 18 months; MMR at 12 and 18 months; DTP booster at 18 months.',
+  'Td/DT in school: the Basic Vaccination Guide states Td is given in Egyptian schools (grades not fully legible in the source); it is NOT part of the compulsory table. WHO recommends DTP-containing boosters at 4\u20137 and 9\u201315 years \u2013 see the WHO tab.',
+  'Influenza: not compulsory in Egypt; recommended from 6 months (MOHP spokesperson, Sept 2026). Annual vaccination.',
+  'HPV: not in the Egyptian compulsory schedule. WHO targets girls aged 9\u201314 years (1\u20132 doses).',
+  'Rotavirus, PCV, varicella, hepatitis A, meningococcal: optional (extra) vaccines in Egypt per the Basic Vaccination Guide. Confirm any newer MOHP introductions with the Ministry.'
+];
+
+
+const ROUTINE_SCHEDULE_WHO = [
+  { ageMonths:0, label:'Birth', compulsory:['BCG: 1 dose as soon as possible after birth','Hepatitis B birth dose (as soon as possible, ideally within 24 hours)'], optional:['RSV: either maternal vaccine (3rd trimester) or long-acting monoclonal antibody to the newborn \u2013 not both','bOPV birth dose (polio-endemic / high importation-risk countries)'] },
+  { ageMonths:1.4, label:'6 weeks (minimum age of first dose)', compulsory:['DTP-containing vaccine dose 1','Hepatitis B dose with DTPcv1 (3-dose and 4-dose options)','Hib dose 1','Pneumococcal conjugate (PCV) dose 1','Rotavirus dose 1 (as soon as possible after 6 weeks; 2\u20133 doses depending on product)','Polio: bOPV dose 1 (OPV-using countries); IPV-only schedules start IPV at 6\u20138 weeks'], optional:['Early-option polio schedule: IPV at 6 weeks (full-dose IPV)'] },
+  { ageMonths:2.3, label:'10 weeks (\u2265 4 weeks after previous dose)', compulsory:['DTP-containing vaccine dose 2','Hepatitis B dose with DTPcv2 (4-dose option)','Hib dose 2','PCV dose 2 (8-week interval for 2p+1; 4 weeks minimum for 3p+0)','Rotavirus dose 2','Polio: bOPV dose 2 (e.g. with DTPcv2)'], optional:[] },
+  { ageMonths:3.2, label:'14 weeks (\u2265 4 weeks after previous dose)', compulsory:['DTP-containing vaccine dose 3 (complete the primary series by 6 months of age if possible)','Hepatitis B dose with DTPcv3','Hib dose 3 (3-dose option)','Polio: bOPV dose 3','Polio: IPV dose 1 (preferred schedule 3 bOPV + 2 IPV; from 14 weeks, e.g. with DTPcv3)'], optional:['PCV dose 3 (3p+0 option)','Rotavirus dose 3 (only if the product requires 3 doses)'] },
+  { ageMonths:9, label:'9 months', compulsory:['Measles-containing vaccine dose 1 at 9 months where measles transmission is ongoing (12 months in low-transmission settings); rubella-containing vaccine given with measles (MR/MMR)','Polio: IPV dose 2 (\u2265 4 months after IPV dose 1, e.g. with MCV)','PCV booster at 9\u201318 months (2p+1 option)'], optional:['Yellow fever (with measles-containing vaccine, endemic regions only)','MenA conjugate: 1 dose at 9\u201318 months (meningitis-belt regions)'] },
+  { ageMonths:12, endMonths:23, label:'12\u201323 months', compulsory:['DTP-containing booster 1 (1st of 3 boosters)'], optional:['Hib booster (\u2265 6 months after the last primary dose) if the 2p+1 / 3p+1 option is used'] },
+  { ageMonths:15, endMonths:18, label:'15\u201318 months', compulsory:['Measles-containing vaccine dose 2 (MCV2; with rubella: MR/MMR)'], optional:[] },
+  { ageMonths:48, endMonths:84, label:'4\u20137 years', compulsory:['Td/DT-containing booster 2 (Td preferred from 4 years; DT/DTwP/DTaP acceptable under 7 years)'], optional:[] },
+  { ageMonths:108, endMonths:179, label:'9\u201314 years', compulsory:['Td booster 3 (9\u201315 years)','HPV: 1\u20132 doses for girls aged 9\u201314 years'], optional:[] },
+  { ageMonths:180, label:'15 years', compulsory:['Td booster 3 may be given up to 15 years of age'], optional:[] }
+];
+
+const ROUTINE_RECURRING_NOTES_WHO = [
+  'Source: WHO Summary Tables 1 and 2 \u2013 Recommended Routine Immunization (updated December 2025). WHO states these ages and intervals are for developing country-specific schedules, not for direct use by health workers; national schedules prevail.',
+  'WHO options are shown as written: polio (bOPV+IPV preferred, early option, sequential, IPV-only), Hib (2 or 3 doses with booster), PCV (3p+0 or 2p+1), hepatitis B (3 or 4 doses), rotavirus (2\u20133 doses by product).',
+  'WHO tetanus: 6 doses in total (3 primary + 3 boosters at 12\u201323 months, 4\u20137 years and 9\u201315 years); ideally \u2265 4 years between boosters.',
+  'Regional / high-risk antigens (JE, yellow fever, TBE, typhoid, cholera, meningococcal, etc.) are listed in WHO Table 1 and are not expanded here.'
+];
+
+const ROUTINE_SCHEDULE_CDC = [
+  { ageMonths:0, label:'Birth', compulsory:[], optional:['Hepatitis B dose 1 (CDC 2026: individual decision-making if mother is HBsAg-negative; give at birth if mother is HBsAg-positive or status unknown)', 'RSV antibody (nirsevimab or clesrovimab): if younger than 8 months and entering the first RSV season, when maternal RSV protection is absent or unknown'] },
+  { ageMonths:1, endMonths:2, label:'1\u20132 months', compulsory:[], optional:['Hepatitis B dose 2 (if series started)'] },
+  { ageMonths:2, label:'2 months', compulsory:['DTaP dose 1', 'Hib dose 1', 'PCV (PCV15/PCV20) dose 1', 'IPV dose 1'], optional:['Rotavirus dose 1 (CDC 2026: shared decision-making)', 'MenACWY only if high-risk'] },
+  { ageMonths:4, label:'4 months', compulsory:['DTaP dose 2', 'Hib dose 2', 'PCV dose 2', 'IPV dose 2'], optional:['Rotavirus dose 2'] },
+  { ageMonths:6, label:'6 months', compulsory:['DTaP dose 3', 'PCV dose 3', 'Hib dose 3 only if the product used requires it'], optional:['Rotavirus dose 3 only if RV5 is used', 'Influenza (inactivated): from 6 months; 2 doses at least 4 weeks apart if fewer than 2 prior influenza doses or history unknown, otherwise 1 dose annually (shared decision-making)', 'COVID-19 (shared decision-making)'] },
+  { ageMonths:6, endMonths:18, label:'6\u201318 months', compulsory:['IPV dose 3'], optional:['Hepatitis B dose 3'] },
+  { ageMonths:12, endMonths:15, label:'12\u201315 months', compulsory:['MMR dose 1', 'Varicella dose 1', 'PCV dose 4', 'Hib dose 3 or 4 (depending on product and earlier doses)'], optional:[] },
+  { ageMonths:12, endMonths:23, label:'12\u201323 months', compulsory:[], optional:['Hepatitis A 2-dose series (CDC 2026: high-risk/shared decision-making)'] },
+  { ageMonths:15, endMonths:18, label:'15\u201318 months', compulsory:['DTaP dose 4'], optional:[] },
+  { ageMonths:48, endMonths:83, label:'4\u20136 years', compulsory:['DTaP dose 5', 'IPV dose 4', 'MMR dose 2', 'Varicella dose 2'], optional:[] },
+  { ageMonths:132, endMonths:155, label:'11\u201312 years', compulsory:['Tdap (1 dose)', 'HPV (CDC 2026: 1 dose)'], optional:['MenACWY dose 1 (CDC 2026: high-risk/shared decision-making)'] },
+  { ageMonths:192, label:'16 years', compulsory:[], optional:['MenACWY booster dose 2', 'MenB (shared clinical decision-making, ages 16\u201318)'] }
+];
+
+const ROUTINE_RECURRING_NOTES_CDC = [
+  'Tdap/Td: after the adolescent Tdap dose, Td or Tdap every 10 years; Tdap in EVERY pregnancy (ideally 27\u201336 weeks).',
+  'Influenza and COVID-19: moved to shared clinical decision-making in the CDC January 2026 schedule.',
+  'CDC schedule dated January 2026 (11 diseases recommended for all children). Ages here follow the CDC age-based table; confirm category changes at cdc.gov/vaccines/hcp/imz-schedules before clinical use.',
+  'The AAP schedule differs from the CDC 2026 schedule (AAP continues routine hepatitis B, rotavirus, hepatitis A, influenza, meningococcal) \u2013 not yet included in this app.'
+];
+
+const ROUTINE_DIFFERENCES = [
+  'Polio: Egypt = Sabin (OPV) at birth, 2, 4, 6, 9, 12, 18 months + Salk (IPV) at 2, 4, 6 months; WHO = 3 bOPV + 2 IPV (preferred), IPV from 14 weeks, no IPV booster; CDC = IPV only (4 doses).',
+  'DTP boosters: Egypt compulsory = 3 primary (pentavalent, wP) + 1 booster at 18 months; WHO = 3 primary + 3 boosters (12\u201323 months, 4\u20137 years, 9\u201315 years); CDC = DTaP at 2, 4, 6, 15\u201318 months and 4\u20136 years, then Tdap at 11\u201312 years.',
+  'Primary-series timing: Egypt 2/4/6 months; WHO 6/10/14 weeks (minimum age 6 weeks); CDC 2/4/6 months.',
+  'BCG: Egypt and WHO give it at birth; it is not part of the US routine schedule.',
+  'Hepatitis B birth dose: routine in Egypt and WHO (within 24 hours); CDC 2026 uses individual decision-making when the mother is HBsAg-negative.',
+  'Rotavirus and PCV: WHO recommends both for all programmes; they are optional extras in Egypt; CDC recommends PCV for all children, while rotavirus is shared decision-making in CDC 2026.',
+  'Measles / MMR: Egypt MMR at 12 and 18 months; WHO measles-containing vaccine at 9 months (high transmission) or 12 months, and a second dose at 15\u201318 months; CDC MMR at 12\u201315 months and 4\u20136 years.',
+  'HPV: not in the Egyptian compulsory schedule; WHO targets girls aged 9\u201314 years (1\u20132 doses); CDC 2026 recommends 1 dose at 11\u201312 years.'
+];
+
+let routineRegion = 'EGYPT';
+const ROUTINE_LABELS = {
+  EGYPT: { title:'Egypt Schedule (national, MOHP)', comp:'Compulsory', opt:'Optional / extra',
+    intro:"Egypt national routine schedule (MOHP compulsory vaccines, birth to 18 months; optional extras listed separately). Enter the child's age to display the next routine doses by age in a clear timeline. WHO boosters that Egypt does not give as compulsory are on the WHO tab.",
+    source:'Compulsory schedule source: Egyptian Ministry of Health and Population compulsory table (Basic Vaccination Guide, updated 22/2/2021; consistent with the EHC nursing-education table, 2025, with Salk at 2, 4 and 6 months). Optional schedule source: the \u201CExtra Vaccines\u201D section in Basic Vaccination Guide plus the age list in catch up vaccines.pdf. Confirm current MOHP policy before clinical use.' },
+  WHO: { title:'WHO Schedule (Summary Tables, Dec 2025)', comp:'Recommended for all programmes', opt:'Option / regional / high-risk',
+    intro:"WHO recommended routine immunization for children (Summary Tables 1 and 2, updated December 2025). Enter the child's age to display the next recommended doses; options and regional vaccines are shown separately.",
+    source:'Source: WHO Position Papers Summary Tables 1 and 2 \u2013 Recommended Routine Immunization (updated December 2025). Ages and intervals are for the development of country-specific schedules; national schedules prevail.' },
+  CDC: { title:'CDC Schedule (US, 2026)', comp:'Recommended for all children', opt:'High-risk / shared decision',
+    intro:"CDC (US) routine schedule, January 2026 categories. Enter the child's age to display the next routine doses; vaccines are split into those recommended for all children and those for high-risk groups or shared clinical decision-making.",
+    source:'Source: CDC Child and Adolescent Immunization Schedule by Age (ages) and the CDC January 2026 schedule update (categories). Verify against cdc.gov/vaccines/hcp/imz-schedules before clinical use.' }
+};
+function setRoutineRegion(r){
+  routineRegion = r;
+  document.getElementById('routineBtnEgypt').classList.toggle('active', r==='EGYPT');
+  document.getElementById('routineBtnWho').classList.toggle('active', r==='WHO');
+  document.getElementById('routineBtnCdc').classList.toggle('active', r==='CDC');
+  document.getElementById('routineIntro').textContent = ROUTINE_LABELS[r].intro;
+  document.getElementById('routineSource').textContent = ROUTINE_LABELS[r].source;
+  renderRoutineSchedule();
+}
+function routineEnd(item){
+  if(item._end === undefined){
+    if(typeof item.endMonths === 'number'){
+      const e = item.endMonths;
+      item._end = (e >= 24 && e % 12 === 0) ? e + 11.97 : e + 0.97;
+    } else {
+      const arr = [ROUTINE_SCHEDULE_EGYPT, ROUTINE_SCHEDULE_WHO, ROUTINE_SCHEDULE_CDC].find(a => a.indexOf(item) >= 0) || [item];
+      const nexts = arr.map(x => x.ageMonths).filter(v => v > item.ageMonths + 0.001);
+      const cap = item.ageMonths + (item.ageMonths < 24 ? 0.97 : 11.97);
+      item._end = nexts.length ? Math.min(cap, Math.min.apply(null, nexts) - 0.01) : cap;
+    }
+  }
+  return item._end;
+}
+function routineIsDue(item, ageMonths){ return ageMonths + 0.001 >= item.ageMonths && ageMonths <= routineEnd(item) + 0.001; }
+function renderRoutineSchedule(){
+  const out = document.getElementById('routineScheduleOutput');
+  if(!out) return;
+  const L = ROUTINE_LABELS[routineRegion];
+  const SCHEDULE = routineRegion === 'CDC' ? ROUTINE_SCHEDULE_CDC : (routineRegion === 'WHO' ? ROUTINE_SCHEDULE_WHO : ROUTINE_SCHEDULE_EGYPT);
+  const NOTES = routineRegion === 'CDC' ? ROUTINE_RECURRING_NOTES_CDC : (routineRegion === 'WHO' ? ROUTINE_RECURRING_NOTES_WHO : ROUTINE_RECURRING_NOTES_EGYPT);
+  const ageVal = parseFloat(document.getElementById('routineAgeValue').value);
+  const ageUnit = document.getElementById('routineAgeUnit').value;
+  if(isNaN(ageVal) || ageVal < 0){
+    out.innerHTML = '<div class="card"><h2>Enter the child\u2019s age</h2><p>Type an age in months or years above to see the routine milestones for the selected schedule.</p></div>';
+    return;
+  }
+  const ageMonths = (ageUnit === 'years' ? ageVal * 12 : ageVal);
+  const past = SCHEDULE.filter(item => routineEnd(item) + 0.001 < ageMonths);
+  const future = SCHEDULE.filter(item => routineEnd(item) + 0.001 >= ageMonths);
+  const dueNow = SCHEDULE.find(item => routineIsDue(item, ageMonths));
+  const nextComp = future.find(item => item.compulsory.length);
+  const nextOpt = future.find(item => item.optional.length);
+
+  const listHtml = (items) => items.length
+    ? `<ul class="routine-list">${items.map(v => `<li>${v}</li>`).join('')}</ul>`
+    : '<div class="routine-empty">None at this milestone.</div>';
+
+  const cards = future.length ? future.map(item => `
+    <div class="routine-card ${routineIsDue(item, ageMonths) ? 'due-now' : ''}">
+      <div class="routine-age">
+        <div class="routine-age-title">${item.label}</div>
+        <div class="routine-age-badge">${routineIsDue(item, ageMonths) ? 'Due now' : 'Upcoming'}</div>
+      </div>
+      <div class="routine-split">
+        <div>
+          <div class="routine-pill compulsory">${L.comp}</div>
+          ${listHtml(item.compulsory)}
+        </div>
+        <div>
+          <div class="routine-pill optional">${L.opt}</div>
+          ${listHtml(item.optional)}
+        </div>
+      </div>
+    </div>`).join('') : `<div class="card"><p>No later milestones are stored in this routine schedule panel for the entered age. The last stored milestone is <strong>${SCHEDULE[SCHEDULE.length-1].label}</strong>. See the recurring / later notes below, and use the Catch-Up Calculator or the Integrated tab for any doses that were missed.</p></div>`;
+  const pastHtml = past.length ? `
+    <div class="card routine-note-card">
+      <h2>Earlier milestones not shown</h2>
+      <p>Already passed at this age: ${past.map(p => p.label).join(', ')}. If any of those doses were not given, use the Catch-Up Calculator or the Integrated Catch-Up + Routine tab.</p>
+    </div>` : '';
+
+  const ageText = ageMonths < 24 ? `${Number(ageMonths.toFixed(1))} month${Math.abs(ageMonths-1) < 0.001 ? '' : 's'}` : `${Number((ageMonths/12).toFixed(1))} year${Math.abs(ageMonths/12-1) < 0.001 ? '' : 's'}`;
+
+  out.innerHTML = `
+    <div class="card routine-hero">
+      <h2>Next Routine Doses – ${L.title}</h2>
+      <div class="routine-summary">
+        <div class="routine-stat">
+          <div class="label">Current age</div>
+          <div class="value">${ageText}</div>
+        </div>
+        <div class="routine-stat">
+          <div class="label">Next ${L.comp.toLowerCase()} milestone</div>
+          <div class="value">${nextComp ? `<strong>${nextComp.label}</strong><br>${nextComp.compulsory.join(', ')}` : 'No further milestone of this type stored in this panel.'}</div>
+        </div>
+        <div class="routine-stat">
+          <div class="label">Next ${L.opt.toLowerCase()} milestone</div>
+          <div class="value">${nextOpt ? `<strong>${nextOpt.label}</strong><br>${nextOpt.optional.join(', ')}` : 'No further milestone of this type stored in this panel.'}</div>
+        </div>
+      </div>
+      <div class="source-tag">This routine tab is designed as an age-based viewer, not a catch-up engine. It shows the milestones due now and later from the stored routine schedule, with compulsory and optional vaccines split visually for easier reading. A milestone stays marked Due now until its window ends (one month for single-age visits, the end of the last month or year for ranges).</div>
+    </div>
+
+    ${pastHtml}
+
+    <div class="routine-grid">${cards}</div>
+
+    <div class="card routine-note-card">
+      <h2>Recurring / later notes</h2>
+      <ul>${NOTES.map(v => `<li>${v}</li>`).join('')}</ul>
+    </div>
+
+    <div class="card routine-note-card">
+      <h2>Egypt vs CDC \u2013 key differences</h2>
+      <ul>${ROUTINE_DIFFERENCES.map(v => `<li>${v}</li>`).join('')}</ul>
+    </div>
+  `;
+}
+
+// ===================== Integrated catch-up + routine planner =====================
+let integratedRegion = 'EGYPT';
+const INTEGRATED_GROUPS = [['Hepatitis B',/Hepatitis B|\bHepB\b|Pentavalent/],['BCG',/\bBCG\b/],['Polio',/\bOPV\b|\bIPV\b|Sabin|Salk|Polio/],['DTP-containing',/Pentavalent|\bDTP\b|\bDTaP\b|\bTd\b|\bDT\b|\bTdap\b/],['Hib',/\bHib\b/],['Pneumococcal (PCV)',/Pneumococcal|\bPCV\b/],['Rotavirus',/Rotavirus/],['Measles / MMR',/\bMMR\b|Measles-containing|\bMCV\b/],['Varicella',/Varicella/],['Hepatitis A',/Hepatitis A/],['Influenza',/Influenza/],['HPV',/\bHPV\b/],['Meningococcal',/Meningococcal|\bMenA\b|\bMenACWY\b|\bMenB\b/],['RSV',/\bRSV\b|nirsevimab/],['Other WHO option',/Yellow fever|Japanese Encephalitis|Tick-Borne|Typhoid|Cholera/]];
+function integratedSchedule(){return integratedRegion==='WHO'?ROUTINE_SCHEDULE_WHO:(integratedRegion==='CDC'?ROUTINE_SCHEDULE_CDC:ROUTINE_SCHEDULE_EGYPT);}
+function integratedAgeMonths(){const dob=document.getElementById('integratedDob').value,visit=document.getElementById('integratedVisitDate').value;if(dob&&visit){return Math.max(0,(new Date(visit+'T00:00:00')-new Date(dob+'T00:00:00'))/(1000*60*60*24*30.4375));}const v=parseFloat(document.getElementById('integratedAgeValue').value);return isNaN(v)?NaN:(document.getElementById('integratedAgeUnit').value==='years'?v*12:v);}
+let integratedDobAuto=false;
+function integratedIsoFromDay(day){return new Date(day*DAYMS).toISOString().slice(0,10);}
+function syncIntegratedDobFromAge(){
+  const dobEl=document.getElementById('integratedDob'),raw=document.getElementById('integratedAgeValue').value,v=parseFloat(raw);
+  if(raw===''||isNaN(v)||v<0){if(integratedDobAuto){dobEl.value='';integratedDobAuto=false;}renderIntegratedChecklist();return;}
+  const months=document.getElementById('integratedAgeUnit').value==='years'?v*12:v;
+  const vs=document.getElementById('integratedVisitDate').value;
+  const visitDay=vs?toDay(vs):toDay(new Date().toISOString().slice(0,10));
+  const w=Math.floor(months+1e-9),fr=months-w;
+  dobEl.value=integratedIsoFromDay(shiftMonths(visitDay,-w)-Math.round(fr*MDAYS));
+  integratedDobAuto=true;
+  renderIntegratedChecklist();
+}
+function onIntegratedDobChange(){integratedDobAuto=false;syncIntegratedAgeFromDob();}
+function onIntegratedVisitChange(){const raw=document.getElementById('integratedAgeValue').value;if(integratedDobAuto&&raw!==''&&!isNaN(parseFloat(raw)))syncIntegratedDobFromAge();else syncIntegratedAgeFromDob();}
+function syncIntegratedAgeFromDob(){const a=integratedAgeMonths();if(!isNaN(a)&&document.getElementById('integratedDob').value){document.getElementById('integratedAgeValue').value=Math.round(a*10)/10;document.getElementById('integratedAgeUnit').value='months';}renderIntegratedChecklist();}
+function allIntegratedDoses(){const rota=document.getElementById('whoRotaProduct')?document.getElementById('whoRotaProduct').value:'2';const list=[];integratedSchedule().forEach((m,mi)=>[['compulsory','Routine / recommended'],['optional','Optional / extra / indicated']].forEach(([k,label])=>(m[k]||[]).forEach((dose,di)=>{if(integratedRegion==='WHO'&&rota==='2'&&/Rotavirus dose 3/.test(dose))return;if(/if not already given/i.test(dose))return;if(integratedRegion==='WHO'&&(/PCV dose 3 \(3p\+0/.test(dose)||/Early-option polio schedule/.test(dose)))return;const hit=INTEGRATED_GROUPS.find(x=>x[1].test(dose));list.push({id:'i_'+mi+'_'+k+'_'+di,group:hit?hit[0]:'Other',dose,milestone:m.label,ageMonths:m.ageMonths,kind:label});})));return list;}
+function setIntegratedRegion(r){integratedRegion=r;integratedState={status:{},date:{}};[['Egypt','EGYPT'],['Who','WHO'],['Cdc','CDC']].forEach(x=>document.getElementById('integratedBtn'+x[0]).classList.toggle('active',r===x[1]));document.getElementById('whoIntegratedOptions').style.display=r==='WHO'?'block':'none';document.getElementById('integratedPlan').innerHTML='';renderIntegratedChecklist();}
+let integratedState={status:{},date:{}};
+function renderIntegratedChecklist(){
+  const root=document.getElementById('integratedChecklist');if(!root)return;
+  document.querySelectorAll('.integrated-status').forEach(el=>{integratedState.status[el.dataset.id]=el.value;});
+  document.querySelectorAll('.integrated-date').forEach(el=>{integratedState.date[el.dataset.id]=el.value;});
+  const age=integratedAgeMonths();
+  if(isNaN(age)){root.innerHTML='<p class="dose-table-note">Enter the date of birth (and visit date) or the current age to list the vaccines due so far.</p>';return;}
+  const by={};allIntegratedDoses().filter(d=>d.ageMonths<=age+.01).forEach(d=>(by[d.group]||(by[d.group]=[])).push(d));
+  const groups=Object.entries(by);
+  root.innerHTML='<p class="dose-table-note">Everything starts as <strong>Received</strong>. Change only the doses the child did <strong>not</strong> receive, or whose record is unknown. Optionally enter the date each dose was given so the app can check validity.</p>'+(groups.length?groups.map(([g,ds])=>'<h3 style="margin:18px 0 6px;">'+g+'</h3><table class="dose-table"><thead><tr><th>Dose</th><th>Normally due</th><th>Status</th><th>Date given (optional)</th></tr></thead><tbody>'+ds.map(d=>{const st=integratedState.status[d.id]||'received',dt=integratedState.date[d.id]||'';return '<tr><td>'+d.dose+(d.kind==='Routine / recommended'?'':' <span class="dose-table-note">(optional)</span>')+'</td><td>'+d.milestone+'</td><td><select class="integrated-status" data-id="'+d.id+'"><option value="received"'+(st==='received'?' selected':'')+'>Received</option><option value="missed"'+(st==='missed'?' selected':'')+'>Not received</option><option value="unknown"'+(st==='unknown'?' selected':'')+'>Unknown \u2014 verify record</option></select></td><td><input type="date" class="integrated-date" data-id="'+d.id+'" value="'+dt+'"></td></tr>';}).join('')+'</tbody></table>').join(''):'<p class="dose-table-note">No scheduled doses are due yet at this age.</p>');
+}
+function addMonthsISO(x,m){const d=new Date(x+'T00:00:00');d.setDate(d.getDate()+Math.round(m*30.4375));return d.toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'});}
+const DAYMS=86400000,MDAYS=30.4375;
+function shiftMonths(day,m){const d=new Date(day*DAYMS),dom=d.getUTCDate();const w=m<0?Math.ceil(m-1e-9):Math.floor(m+1e-9),fr=m-w;d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+w);const last=new Date(Date.UTC(d.getUTCFullYear(),d.getUTCMonth()+1,0)).getUTCDate();d.setUTCDate(Math.min(dom,last));return Math.round(d.getTime()/DAYMS)+Math.round(fr*MDAYS);}
+function toDay(str){return Math.floor(Date.parse(str+'T00:00:00Z')/DAYMS);}
+function fmtDay(day){return new Date(day*DAYMS).toLocaleDateString(undefined,{timeZone:'UTC',year:'numeric',month:'short',day:'numeric'});}
+function ageTxt(m){return m<24?(Math.round(m*10)/10)+' months':(Math.round(m/12*10)/10)+' years';}
+function seriesKey(d){const t=d.dose;
+  if(/Influenza.*this season/.test(t))return 'Flu';
+  if(/Influenza|COVID|RSV|MenB|MenACWY|Tdap \(|Yellow|MenA conj|Meningococcal/.test(t))return 'u:'+d.id;
+  if(/Pentavalent/.test(t))return 'Pentavalent';
+  if(/Salk|IPV/.test(t))return 'IPV';
+  if(/Sabin|OPV/.test(t))return 'OPV';
+  if(/Hepatitis B/.test(t))return 'HepB';
+  if(/BCG/.test(t))return 'BCG';
+  if(/DTaP|DTP|\bTd\b|Td\/DT/.test(t))return 'DTP';
+  if(/Hib/.test(t))return 'Hib';
+  if(/Pneumococcal|PCV/.test(t))return 'PCV';
+  if(/Rotavirus/.test(t))return 'Rota';
+  if(/MMR|Measles/.test(t))return 'MMR';
+  if(/Varicella/.test(t))return 'Varicella';
+  if(/Hepatitis A/.test(t))return 'HepA';
+  if(/HPV/.test(t))return 'HPV';
+  return 'u:'+d.id;}
+function minIntervalWeeks(d,k){const t=d.dose;
+  if(k==='Pentavalent'&&/third/.test(t))return 8;
+  if(k==='BCG')return 0;if(k==='HepA')return 24;if(k==='Varicella')return 12;
+  if(k==='DTP'&&/booster|dose 4|dose 5|Td/.test(t))return 24;
+  if(k==='IPV'){if(/dose 4/.test(t))return 24;if(integratedRegion==='WHO'&&/dose 2/.test(t))return 17;return 4;}
+  if(k==='HepB'&&integratedRegion==='CDC'&&/dose 3/.test(t))return 8;
+  if((k==='PCV'||k==='Hib')&&integratedRegion==='CDC'&&/dose 4|dose 3 or 4/.test(t))return 8;
+  return 4;}
+function minAgeMonths(d,k){const t=d.dose;
+  if(d.ageMonths===0)return 0;
+  if(d.ageMonths>0&&d.ageMonths<1.4&&/Hepatitis B/.test(t))return 0.9;
+  if(k==='MMR')return /Measles-containing/.test(t)?9:12;
+  if(k==='Varicella'||k==='HepA')return 12;
+  if(k==='HPV')return 108;
+  if(k==='DTP'){if(/Tdap/.test(t))return 84;if(/Td booster 3/.test(t))return 108;if(/booster 2|dose 5/.test(t))return 48;if(/booster|dose 4/.test(t))return 12;return 1.4;}
+  if(/Influenza|COVID/.test(t))return 6;if(/Yellow fever|MenA conjugate/.test(t))return 9;
+  if(k.indexOf('u:')===0)return d.ageMonths>=108?d.ageMonths*.9:1.4;
+  return 1.4;}
+function isOral(t){return /Sabin|OPV|Rotavirus|Typhoid|Cholera/.test(t);}
+function isLiveInj(t){return /BCG|MMR|Measles-containing|Varicella|Yellow fever/.test(t);}
+function buildIntegratedPlanCore(){
+  const out=document.getElementById('integratedPlan'),age=integratedAgeMonths();
+  {const _d=document.getElementById('integratedDob').value,_v=document.getElementById('integratedVisitDate').value;if(_d&&_v&&_d>_v){out.innerHTML='<p id="warningText">The date of birth is after the visit date. Check both dates.</p>';return;}}
+  if(isNaN(age)){out.innerHTML='<p id="warningText">Enter date of birth plus visit date, or enter current age.</p>';return;}
+  const visitStr=document.getElementById('integratedVisitDate').value,dobStr=document.getElementById('integratedDob').value;
+  const visitDay=visitStr?toDay(visitStr):toDay(new Date().toISOString().slice(0,10));
+  const dobDay=dobStr?toDay(dobStr):(function(){const w=Math.floor(age+1e-9),fr=age-w;return shiftMonths(visitDay,-w)-Math.round(fr*MDAYS);})();
+  const cap=parseInt(document.getElementById('integratedCap').value,10)||4;
+  const ageAt=day=>{let w=Math.max(0,Math.floor((day-dobDay)/MDAYS));while(shiftMonths(dobDay,w+1)<=day)w++;while(w>0&&shiftMonths(dobDay,w)>day)w--;const b=shiftMonths(dobDay,w),nx=shiftMonths(dobDay,w+1);return w+Math.min(0.99,(day-b)/Math.max(1,(nx-b)));};
+  const all=allIntegratedDoses().map((d,i)=>{const sel=document.querySelector('.integrated-status[data-id="'+d.id+'"]'),dt=document.querySelector('.integrated-date[data-id="'+d.id+'"]');
+    d.idx=i;d.key=seriesKey(d);d.status=sel?sel.value:'future';d.dateStr=dt?dt.value:'';d.orig=shiftMonths(dobDay,d.ageMonths);d.oral=isOral(d.dose);d.live=isLiveInj(d.dose);return d;});
+  let fluFlag='';
+  if(document.getElementById('integratedFluSeason').value==='yes'){
+    for(let i=all.length-1;i>=0;i--)if(all[i].group==='Influenza')all.splice(i,1);
+    const hist=document.getElementById('integratedFluHistory').value;
+    const two=age<108&&hist!=='2';
+    const st=age<6?'future':'missed';
+    const names=two?['Influenza dose 1 (this season)','Influenza dose 2 (this season, at least 4 weeks after dose 1)']:['Influenza dose (this season)'];
+    names.forEach((nm,j)=>all.push({id:'flu_season_'+j,group:'Influenza',dose:nm,milestone:'this influenza season',ageMonths:6,kind:'Optional / extra / indicated',idx:all.length,key:'Flu',status:st,dateStr:'',orig:shiftMonths(dobDay,6),oral:false,live:false}));
+    fluFlag='Influenza: planned for this season at the clinician\u2019s request. '+(two?(age<108&&hist==='unk'?'History unknown, so 2 doses at least 4 weeks apart are planned.':'Fewer than 2 prior influenza doses, so 2 doses at least 4 weeks apart are planned.'):(age>=108?'Age 9 years or older: 1 dose.':'2 or more prior doses: 1 dose.'))+' Confirm the current-season product and local timing.'+(age<6?' Influenza vaccine is not given before 6 months of age, so the doses are scheduled for 6 months.':'');
+  }
+  const series={};all.forEach(d=>(series[d.key]||(series[d.key]=[])).push(d));
+  Object.values(series).forEach(a=>a.sort((x,y)=>x.ageMonths-y.ageMonths||x.idx-y.idx));
+  const flags=[],prev={},placed=[],hibDays=[];let hibNote=false;
+  Object.entries(series).forEach(([k,arr])=>{let last=null;arr.forEach(d=>{
+    if(d.status!=='received')return;
+    let day=d.dateStr?toDay(d.dateStr):null;const assumed=day===null;
+    if(assumed)day=Math.min(d.orig,visitDay);
+    else{
+      const minDay=shiftMonths(dobDay,minAgeMonths(d,k))-4;
+      if(day>visitDay){flags.push(d.dose+': the date given ('+fmtDay(day)+') is after the visit date \u2014 treated as not received.');d.status='invalid';return;}
+      if(day<dobDay){flags.push(d.dose+': the date given ('+fmtDay(day)+') is before birth \u2014 treated as not received.');d.status='invalid';return;}
+      if(day<minDay){flags.push(d.dose+' given '+fmtDay(day)+' was before the minimum age \u2014 may not count; treated as not received.');d.status='invalid';return;}
+      if(last!==null&&day<last+Math.round(minIntervalWeeks(d,k)*7)-4){flags.push(d.dose+' given '+fmtDay(day)+' was too soon after the previous dose (minimum '+minIntervalWeeks(d,k)+' weeks) \u2014 may not count; treated as not received.');d.status='invalid';return;}
+    }
+    last=day;prev[k]=day;if(k==='Hib')hibDays.push(day);
+    if(d.live&&!assumed)placed.push({d,day,k,received:true});
+  });});
+  const liveRec=[];all.forEach(d=>{if(d.live&&d.status==='received'&&d.dateStr)liveRec.push({d,day:toDay(d.dateStr)});});
+  liveRec.sort((a,b)=>a.day-b.day);
+  liveRec.forEach((p,i)=>{if(p.d.status!=='received')return;
+    const cf=liveRec.slice(0,i).find(q=>q.d.status==='received'&&q.d.key!==p.d.key&&q.day!==p.day&&p.day-q.day<28);
+    if(cf){flags.push(p.d.dose+' given '+fmtDay(p.day)+' was only '+(p.day-cf.day)+' days after '+cf.d.dose+' ('+fmtDay(cf.day)+'). Two different live injectable vaccines must be given on the same day or at least 28 days apart (the 4-day grace period does not apply) \u2014 treated as not received; repeat.');p.d.status='invalid';const ix=placed.findIndex(x=>x.d===p.d);if(ix>=0)placed.splice(ix,1);if(prev[p.d.key]===p.day)delete prev[p.d.key];}});
+  if(integratedRegion==='EGYPT'&&all.some(d=>d.key==='Pentavalent'&&d.status!=='received'&&d.status!=='future'))flags.push('Pentavalent (DTP + HepB + Hib): a dose is missing, unknown or invalid. This planner treats pentavalent as one vaccine, so dates are not adjusted for each component. Verify before giving: hepatitis B needs at least 8 weeks between doses 2 and 3, at least 16 weeks from dose 1 to the last dose, and a final dose no earlier than 24 weeks of age; DTP and Hib have their own catch-up requirements.');
+  const MAXAGE={Rota:integratedRegion==='WHO'?24:8,Hib:60,PCV:60};
+  const pend={};Object.entries(series).forEach(([k,arr])=>{pend[k]=arr.filter(d=>d.status!=='received');});
+  const tooOld=[];let guard=0;
+  const rk=d=>(/^(DTaP|IPV|Hepatitis B dose|PCV|MMR|Varicella dose|Tdap|HPV)/.test(d.dose)&&!/shared|high-risk/i.test(d.dose))?0:(d.kind==='Optional / extra / indicated'||/shared (clinical )?decision|high-risk|can start|may begin|optional|Influenza|COVID/i.test(d.dose))?2:(/only if/i.test(d.dose)?1:0);
+  while(Object.values(pend).some(a=>a.length)&&guard++<3000){
+    let best=null;
+    Object.entries(pend).forEach(([k,a])=>{if(!a.length)return;const d=a[0];
+      let e=Math.max(visitDay,shiftMonths(dobDay,minAgeMonths(d,k)));
+      if(prev[k]!=null)e=Math.max(e,prev[k]+Math.round(minIntervalWeeks(d,k)*7));
+      if(k==='Hib'&&integratedRegion==='CDC'&&hibDays.length&&ageAt(Math.min(...hibDays))>=12)e=Math.max(e,Math.max(...hibDays)+56);
+      if(k==='DTP'&&/booster/i.test(d.dose)&&pend.Pentavalent){if(pend.Pentavalent.length)return;if(prev.Pentavalent!=null)e=Math.max(e,prev.Pentavalent+168);}
+      const overdue=d.status!=='future',t=overdue?e:Math.max(e,d.orig);
+      const c={d,k,e,t,overdue};
+      if(!best||t<best.t||(t===best.t&&c.overdue&&!best.overdue)||(t===best.t&&c.overdue===best.overdue&&(rk(d)<rk(best.d)||(rk(d)===rk(best.d)&&d.idx<best.d.idx))))best=c;});
+    const {d,k,e}=best;let t=best.t;
+    if(k==='Hib'&&integratedRegion!=='WHO'&&hibDays.length){const hs=hibDays.slice().sort((x,y)=>x-y);if(hs.some(x=>ageAt(x)>=15)||(ageAt(hs[0])>=12&&hs.length>=2)){if(!hibNote){hibNote=true;flags.push('Hib: no further dose is needed. CDC catch-up needs only 1 dose when the first valid dose is given at 15 months or older, and 2 doses when the first is given at 12-14 months. '+d.dose+' was removed from the plan.');}pend[k].shift();continue;}}
+    if(MAXAGE[k]&&ageAt(t)>MAXAGE[k]){tooOld.push(d);pend[k].shift();continue;}
+    if(k==='Rota'&&integratedRegion!=='WHO'&&(t-dobDay)>=105&&!series[k].some(x=>x.ageMonths<d.ageMonths&&x.status==='received')&&!placed.some(p=>p.k==='Rota'&&p.d.ageMonths<d.ageMonths)){tooOld.push(d);pend[k].shift();continue;}
+    for(let it=0;it<80;it++){let moved=false;
+      if(d.live){const cf=placed.find(p=>p.d.live&&p.day!==t&&Math.abs(p.day-t)<28);if(cf){t=(cf.day>=e)?cf.day:cf.day+28;moved=true;}}
+      if(!moved&&!d.oral&&placed.filter(p=>p.day===t&&!p.d.oral).length>=cap){t+=28;moved=true;}
+      if(!moved)break;}
+    placed.push({d,day:t,k});prev[k]=t;if(k==='Hib')hibDays.push(t);pend[k].shift();
+  }
+  const byDay={};placed.filter(p=>!p.received).forEach(p=>(byDay[p.day]||(byDay[p.day]=[])).push(p));
+  if(Object.keys(byDay).length&&!byDay[visitDay])byDay[visitDay]=[];
+  const li=(arr,catchup)=>arr.length?'<ul class="routine-list">'+arr.map(p=>'<li>'+p.d.dose+(p.d.key==='Flu'?'':catchup?' <span class="dose-table-note">(was due: '+p.d.milestone+')</span>':(p.day>p.d.orig+14?' <span class="dose-table-note">(moved from '+p.d.milestone+')</span>':''))+(p.d.status==='unknown'?' <strong>\u2014 verify record</strong>':'')+(p.d.status==='invalid'?' <strong>\u2014 earlier dose invalid, repeat</strong>':'')+'</li>').join('')+'</ul>':'<div class="routine-empty">None.</div>';
+  const cards=Object.keys(byDay).map(Number).sort((a,b)=>a-b).map((day,i)=>{const ps=byDay[day],c=ps.filter(p=>p.d.status!=='future'&&p.d.key!=='Flu'),r=ps.filter(p=>p.d.status==='future'||p.d.key==='Flu'),inj=ps.filter(p=>!p.d.oral).length,isV1=day===visitDay;
+    return '<div class="routine-card '+(isV1?'due-now':'')+'"><div class="routine-age"><div class="routine-age-title">'+(isV1?'Visit 1 \u2014 today'+(ps.length?'':' \u2014 nothing due'):ageTxt(ageAt(day))+(c.length?' \u2014 catch-up visit':(ps.some(p=>p.d.key==='Flu')?' \u2014 follow-up visit':'')))+'</div><div class="routine-age-badge">'+fmtDay(day)+' \u00b7 '+inj+' injection'+(inj===1?'':'s')+'</div></div><div class="routine-split"><div><div class="routine-pill compulsory">Catch-up (missed)</div>'+li(c,true)+'</div><div><div class="routine-pill optional">Routine / optional at this age</div>'+li(r,false)+'</div></div></div>';}).join('');
+  const fluCard=fluFlag?'<div class=\"card routine-note-card\" style=\"border-left:6px solid #A13E4C;\"><h3>Influenza: check before giving</h3><ul><li>'+fluFlag+'</li></ul></div>':'';const flagCard=flags.length?'<div class="card routine-note-card"><h3>Record check</h3><ul>'+flags.map(f=>'<li>'+f+'</li>').join('')+'</ul></div>':'';
+  const oldCard=tooOld.length?'<div class="routine-card"><div class="routine-age"><div class="routine-age-title">Beyond age limit</div><div class="routine-age-badge">Do not start / continue</div></div><div class="routine-split"><div><div class="routine-pill compulsory">Not scheduled</div><ul class="routine-list">'+tooOld.map(function(d){var rotaNote='';if(/Rotavirus/.test(d.dose)&&integratedRegion!=="WHO"){if(integratedRegion==="EGYPT"){rotaNote=' <span class="dose-table-note">(Egypt app rule: do not start the series at 15 weeks 0 days or older; maximum age for any dose is 8 months 0 days. WHO may allow missed doses up to 24 months in endemic or high-mortality settings, but that is not the default Egypt rule here.)</span>';}else{rotaNote=' <span class="dose-table-note">(CDC: do not start the series at 15 weeks 0 days or older; maximum age for any dose is 8 months 0 days)</span>';}}return '<li>'+d.dose+rotaNote+'</li>';}).join('')+'</ul></div><div><div class="routine-pill optional">Note</div><p class="dose-table-note">The child is past the usual maximum age to start or continue these doses. Check the product label and national programme.</p></div></div></div>':'';
+  let histCard='';
+  {const hist=all.filter(d=>d.key!=='Flu'&&d.status!=='future'&&d.ageMonths<=age+.01);
+   if(hist.length){
+    const lab=d=>d.status==='received'?(d.dateStr?'Received on '+fmtDay(toDay(d.dateStr)):'Received \u2014 assumed, not verified'):(d.status==='missed'?'Not received':(d.status==='unknown'?'Unknown \u2014 verify record':'Invalid \u2014 repeat'));
+    const nA=hist.filter(d=>d.status==='received'&&!d.dateStr).length;
+    histCard='<div class="card hist-card routine-note-card"><h3>Vaccine history used for this plan</h3>'+(nA?'<p><strong>'+nA+(nA===1?' dose is':' doses are')+' marked assumed: no date was entered, so the record was not checked. Confirm with the vaccination card.</strong></p>':'')+'<table class="dose-table"><thead><tr><th>Dose</th><th>Status</th></tr></thead><tbody>'+hist.map(d=>'<tr><td>'+d.dose+'</td><td>'+lab(d)+'</td></tr>').join('')+'</tbody></table></div>';
+   }}
+  out.innerHTML='<div class="card routine-hero"><h2>Personal vaccine schedule \u2014 '+ROUTINE_LABELS[integratedRegion].title+'</h2><p>Age on visit date: <strong>'+ageTxt(age)+'</strong>. Missed doses are placed at the earliest valid date (minimum age, minimum interval from the previous dose, at most '+cap+' injections per visit, injectable live vaccines on the same day or 28 days apart). Routine doses stay at their normal ages unless an earlier dose pushes them later.</p></div>'+fluCard+flagCard+(cards||(tooOld.length?'<div class="card"><p>Nothing can be scheduled: the doses below are past the maximum age.</p></div>':'<div class="card"><p>Nothing to schedule: every listed dose is marked Received.</p></div>'))+oldCard+histCard+'<div class="card routine-note-card"><p><strong>Check before giving:</strong> intervals and minimum ages here are standard values (4-day grace period applied to recorded doses). Product-specific rules, contraindications, immunocompromise and national policy are not modelled. This is a planning aid, not a prescription.</p></div>';
+}
+function buildIntegratedPlan(){
+  buildIntegratedPlanCore();
+  const out=document.getElementById('integratedPlan');if(!out||!out.querySelector('.routine-card'))return;
+  const g=id=>{const e=document.getElementById(id);return e?e.value:'';};
+  const lines=['INPUTS','Schedule: '+integratedRegion,'DOB: '+(g('integratedDob')||'(blank)'),'Manual age: '+(g('integratedAgeValue')||'-')+' '+g('integratedAgeUnit'),'Visit date: '+g('integratedVisitDate'),'Max injections per visit: '+g('integratedCap')];
+  if(integratedRegion==='WHO')lines.push('WHO rotavirus product: '+g('whoRotaProduct')+'-dose');
+  const marked=[];document.querySelectorAll('.integrated-status').forEach(sel=>{const dt=document.querySelector('.integrated-date[data-id="'+sel.dataset.id+'"]');const row=sel.closest('tr');const name=row?row.children[0].textContent.replace(/\s+/g,' ').trim():sel.dataset.id;if(sel.value!=='received'||(dt&&dt.value))marked.push('- '+name+' => '+sel.value+(dt&&dt.value?' (date given '+dt.value+')':''));});
+  lines.push('Doses changed / dated:');lines.push(marked.length?marked.join('\n'):'- none');
+  lines.push('','RESULT');
+  out.querySelectorAll('.routine-hero p, .routine-card, .routine-note-card').forEach(el=>{
+    if(el.classList.contains('routine-card')){const t=el.querySelector('.routine-age-title'),b=el.querySelector('.routine-age-badge');lines.push('',(t?t.textContent.trim():'')+' | '+(b?b.textContent.trim():''));el.querySelectorAll('.routine-split > div').forEach(col=>{const p=col.querySelector('.routine-pill');const items=[...col.querySelectorAll('li')].map(li=>'   - '+li.textContent.replace(/\s+/g,' ').trim());lines.push(' '+(p?p.textContent.trim():'')+': '+(items.length?'':(col.querySelector('p')?col.querySelector('p').textContent.trim():'none')));items.forEach(i=>lines.push(i));});}
+    else if(el.classList.contains('hist-card')){lines.push('','HISTORY USED');el.querySelectorAll('tbody tr').forEach(tr=>lines.push('   - '+tr.children[0].textContent.trim()+' : '+tr.children[1].textContent.trim()));}
+    else if(el.classList.contains('routine-note-card')){const lis=[...el.querySelectorAll('li')];if(lis.length){lines.push('',(el.querySelector('h3')&&/Influenza/.test(el.querySelector('h3').textContent)?'INFLUENZA: CHECK BEFORE GIVING':'RECORD CHECK'));lis.forEach(li=>lines.push('   - '+li.textContent.trim()));}}
+  });
+  const text=lines.join('\n');
+  const box=document.createElement('div');box.className='no-print';box.style.cssText='margin-top:16px;';
+  box.innerHTML='<h3>Test result as text</h3><textarea id="integratedTestText" readonly style="width:100%;height:auto;font-family:monospace;font-size:12px;"></textarea><button class="btn" type="button" id="integratedCopyBtn" style="margin-top:8px;">Copy result text</button>';
+  out.appendChild(box);
+  const ta=document.getElementById('integratedTestText');ta.value=text;ta.style.height="auto";ta.style.height=(ta.scrollHeight+8)+"px";
+  document.getElementById('integratedCopyBtn').onclick=function(){ta.focus();ta.select();let ok=false;try{ok=document.execCommand('copy');}catch(e){}
+    if(!ok&&navigator.clipboard){navigator.clipboard.writeText(text);ok=true;}this.textContent=ok?'Copied \u2713':'Select the text and copy manually';};
+}
+function initIntegrated(){const v=document.getElementById('integratedVisitDate');if(v&&!v.value)v.value=new Date().toISOString().slice(0,10);document.getElementById('whoIntegratedOptions').style.display='none';renderIntegratedChecklist();}
+
+renderRoutineSchedule();
+initIntegrated();
+populateIntervalDropdowns();
+checkVaccineInterval();
+
+// ===================== Real semantic zoom: year boxes expand into months =====================
+// Base scale: months 0-24, then yearly boxes 3y-18y. Double-clicking a year
+// box replaces it with 12 real month ticks (true resolution increase, not a
+// visual stretch). Double-clicking any of those month ticks collapses the
+// year back to a single box.
+const expandedYears = new Set();
+let scalePoints = [];
+var _mk = {px:null, level:0, max:0};
+var _iv = {count:0, max:0};
+var _baseLines = 3;
+let lastCalcState = null; // set by generateSchedule(); used to focus the timeline on relevant ages only
+
+function getRelevantWindow(){
+  if(!lastCalcState) return null;
+  const { currentAgeMonths, pastDoseAges, plan, result } = lastCalcState;
+  const pts = [currentAgeMonths, ...pastDoseAges];
+  plan.forEach(d => pts.push(currentAgeMonths + d.offsetWeeks / WPM));
+  if(result.maxAgeCutoffMonths) pts.push(result.maxAgeCutoffMonths);
+  return { min: Math.min(...pts), max: Math.max(...pts) };
+}
+
+function buildScalePoints(){
+  const pts = [];
+  for(let m=0;m<=24;m++) pts.push({months:m, isYear:false});
+  for(let y=3;y<=18;y++){
+    if(expandedYears.has(y)){
+      for(let mm=0; mm<12; mm++){ pts.push({months:y*12+mm, isYear:false, fromExpandedYear:y}); }
+    } else {
+      pts.push({months:y*12, isYear:true, yearValue:y});
+    }
+  }
+  return pts;
+}
+
+function buildTimelineDom(){
+  const full = buildScalePoints();
+  let visible = full;
+  const rel = getRelevantWindow();
+  if(rel){
+    let lo = rel.min, hi = rel.max;
+    if(hi - lo < 2) hi = lo + 2;
+    const pad = Math.max((hi - lo) * 0.2, 0.5);
+    lo -= pad; hi += pad;
+    let filtered = full.filter(p => p.months >= lo && p.months <= hi);
+    const firstIdx = full.indexOf(filtered[0]);
+    const lastIdx = full.indexOf(filtered[filtered.length - 1]);
+    if(firstIdx > 0) filtered = [full[firstIdx - 1], ...filtered];
+    if(lastIdx < full.length - 1) filtered = [...filtered, full[lastIdx + 1]];
+    if(filtered.length >= 2) visible = filtered;
+  }
+  scalePoints = visible;
+  const track = document.getElementById('timelineTrack');
+  track.innerHTML = '';
+  scalePoints.forEach(p=>{
+    const tick = document.createElement('div');
+    tick.className = 'tick' + (p.isYear ? ' year' : '');
+    const label = document.createElement('div');
+    label.className = 'tick-label';
+    label.textContent = p.isYear ? (p.months/12)+'y' : (p.months===0? 'Birth' : p.months+'m');
+    tick.appendChild(label);
+    if(p.isYear){
+      tick.classList.add('expandable');
+      tick.title = 'Double-click to expand ' + (p.months/12) + 'y into months';
+      tick.addEventListener('dblclick', () => { expandedYears.add(p.yearValue); redrawTimeline(); });
+    } else if(p.fromExpandedYear !== undefined){
+      tick.classList.add('collapsible');
+      tick.title = 'Double-click to collapse back to year view';
+      tick.addEventListener('dblclick', () => { expandedYears.delete(p.fromExpandedYear); redrawTimeline(); });
+    }
+    track.appendChild(tick);
+  });
+}
+buildTimelineDom();
+
+function monthsToPercent(months){
+  const pts = scalePoints;
+  let idx = -1;
+  for(let i=0;i<pts.length-1;i++){
+    if(months >= pts[i].months && months <= pts[i+1].months){ idx=i; break; }
+  }
+  if(months > pts[pts.length-1].months) idx = pts.length-2;
+  if(idx === -1) idx = 0;
+  const a = pts[idx], b = pts[idx+1];
+  const span = (b.months - a.months) || 1;
+  const frac = (months - a.months) / span;
+  const posIdx = idx + frac;
+  const pct = (posIdx / (pts.length-1)) * 100;
+  return Math.max(0, Math.min(100, pct)); // clamp so far-future boosters (Tdap/TBE) never render off-track
+}
+const WPM = 4.345; // weeks per month
+
+// ===================== Vaccine rule engine =====================
+function calcHepB(ageM, prev, brand, past){
+  if(prev >= 3) return {plan:[], note:'Series complete (3 HepB doses documented).'};
+  const ageW = ageM * WPM;
+  const at = i => { const v = past && past[i-1]; return (v===undefined || v===null || isNaN(v)) ? null : v*WPM - ageW; };
+  let d1 = null, d2 = null;
+  if(prev === 0) d1 = 0;
+  else if(prev === 1){ d1 = at(1); if(d1 === null) d1 = -4; }
+  else { d2 = at(2); if(d2 === null) d2 = -8; d1 = at(1); if(d1 === null) d1 = -16; }
+  let t2 = d2;
+  if(prev <= 1) t2 = (prev === 0) ? 4 : Math.max(0, d1 + 4);
+  const t3 = Math.max(0, t2 + 8, d1 + 16, 24 - ageW);
+  const r = x => Math.round(x*100)/100;
+  const plan = [];
+  if(prev === 0) plan.push({doseNumber:1, offsetWeeks:0});
+  if(prev <= 1) plan.push({doseNumber:2, offsetWeeks:r(t2)});
+  plan.push({doseNumber:3, offsetWeeks:r(t3)});
+  return {plan, note:'Dose 1\u21922: \u22654wk. Final dose: \u22658wk after dose 2, \u226516wk after dose 1, and not before 24 weeks of age. Where earlier doses have no entered age, they are assumed given at the minimum spacing.'};
+}
+function calcDTaP_CDC(ageM, prev){
+  if(ageM >= 84){
+    return {plan:[], maxAgeCutoffMonths:84, note:'Age \u22657 years: switch to Tdap/Td catch-up series (adolescent schedule), not DTaP.'};
+  }
+  const total = 5;
+  if(prev >= total) return {plan:[], maxAgeCutoffMonths:84, note:'Series complete (5 DTaP doses documented).'};
+  const cum = [0,4,8,34,60];
+  const plan = [];
+  let last=0; for(let d=prev+1; d<=total; d++){ let off=cum[d-1]-cum[prev]; const mA={4:12,5:48}; if(mA[d]) off=Math.max(off, Math.round((mA[d]-ageM)*WPM)); if(d>prev+1) off=Math.max(off,last+(d<=3?4:26)); plan.push({doseNumber:d, offsetWeeks:off}); last=off; }
+  return {plan, maxAgeCutoffMonths:84, note:'Intervals: 4wk, 4wk, 6mo, 6mo. Dose 4 must be at age 12 months or older and the series should finish before age 7. Dose 5 is not needed if dose 4 was given at age \u22654 years and \u22656 months after dose 3.'};
+}
+function calcDTaP_WHO(ageM, prev){
+  const total = 5;
+  if(ageM >= 84){
+    return {plan:[], maxAgeCutoffMonths:84, note:'Age \u22657 years: use the Tdap/Td \u2013 WHO module (Td, reduced-dose).'};
+  }
+  if(prev >= total) return {plan:[], maxAgeCutoffMonths:84, note:'WHO series complete (3 primary + 12\u201323 mo booster + 4\u20137 yr booster). Next: Td booster at 9\u201315 years (Tdap/Td \u2013 WHO module).'};
+  const WK = 4.348;
+  const minAgeM = {4:12, 5:48};
+  const plan = [];
+  let t = 0;
+  for(let d=prev+1; d<=total; d++){
+    let off;
+    if(d === prev+1) off = 0; else if(d <= 3) off = t + 4; else off = t + 26;
+    if(minAgeM[d]) off = Math.max(off, Math.round((minAgeM[d] - ageM) * WK));
+    plan.push({doseNumber:d, offsetWeeks: off});
+    t = off;
+  }
+  return {plan, maxAgeCutoffMonths:84, note:'WHO / Egypt: 3 primary doses (WHO 6, 10, 14 weeks; Egypt Penta at 2, 4, 6 months; min 4wk apart), booster at 12\u201323 months (DTPcv), booster at 4\u20137 years (Td/DT-containing; pertussis component not required), then Td at 9\u201315 years. Dose 4 not before 12 months and \u22656mo after dose 3; dose 5 not before 4 years.'};
+}
+function calcTdap_WHO(ageM, prev){
+  if(ageM < 84) return {plan:[], note:'Under 7 years: use DTaP / DT series \u2013 WHO (Egypt). WHO catch-up for a child aged 1 to <7 years with no previous DTP doses: 3 doses at 0, 1 and 6 months, then 2 Td/Tdap boosters at least 1 year apart.'};
+  if(prev >= 1) return {plan:[], note:'WHO: 6 tetanus-toxoid-containing doses (3 primary + 3 boosters at 12\u201323 months, 4\u20137 years and 9\u201315 years) provide long-term protection; routine 10-year boosters are not part of this WHO schedule. Apply national wound-management and pregnancy guidance separately.'};
+  const base = 'Individual catch-up assessment is required if the childhood series is incomplete or undocumented (WHO: resume without repeating documented doses, at least 4 weeks between primary doses, boosters at least 1 year apart in catch-up). Only acellular-pertussis-containing vaccine should be used for pertussis protection at \u22657 years.';
+  if(ageM < 108) return {plan:[{doseNumber:1, offsetWeeks: Math.round((108 - ageM) * WPM)}], note:'WHO / Egypt: if the childhood series is complete, the Td booster is due at 9\u201315 years (shown at 9 years). ' + base};
+  if(ageM <= 180) return {plan:[{doseNumber:1, offsetWeeks:0}], note:'WHO / Egypt: Td booster window 9\u201315 years (3rd booster) if the childhood series is complete. ' + base};
+  return {plan:[], note:'Age is beyond the WHO 9\u201315 year adolescent booster window. Use individual assessment and national adult guidance. ' + base};
+}
+function calcIPV(ageM, prev){
+  const total = 4;
+  if(prev >= total) return {plan:[], note:'Series complete (4 IPV/OPV doses documented).'};
+  const cum = [0,4,8,34];
+  const plan = [];
+  let last=0; for(let d=prev+1; d<=total; d++){ let off=cum[d-1]-cum[prev]; const mA={4:48}; if(mA[d]) off=Math.max(off, Math.round((mA[d]-ageM)*WPM)); if(d>prev+1) off=Math.max(off,last+(d<=3?4:26)); plan.push({doseNumber:d, offsetWeeks:off}); last=off; }
+  let note = 'Intervals: 4wk, 4wk, 6mo. Final dose should be \u22654yr AND \u22656mo after previous dose.';
+  if(prev===2) note += ' Dose 4 may be omitted if dose 3 already given at \u22654y and \u22656mo after dose 2.';
+  return {plan, note};
+}
+function calcHib(ageM, prev){
+  const maxAge = 60;
+  if(ageM >= maxAge) return {plan:[], maxAgeCutoffMonths:maxAge, note:'Healthy children \u22655 years generally do not need Hib catch-up.'};
+  if(catchupRegion !== 'CDC'){
+    if(ageM < 12){
+      if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:4},{doseNumber:3,offsetWeeks:8}], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: <12 months with 0 prior doses: give 3 catch-up doses at least 4 weeks apart. Product schedules vary; verify local product guidance.'};
+      if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0},{doseNumber:3,offsetWeeks:4}], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: <12 months with 1 prior dose: give 2 more doses at least 4 weeks apart.'};
+      if(prev===2) return {plan:[{doseNumber:3,offsetWeeks:0}], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: <12 months with 2 prior doses: give 1 more dose.'};
+      return {plan:[], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: primary Hib series appears complete for age.'};
+    }
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0}], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: first Hib dose at or after 12 months — one dose is sufficient for healthy children.'};
+    return {plan:[], maxAgeCutoffMonths:maxAge, note:'WHO/Egypt mode: no further Hib doses are usually needed for a healthy child once a dose has been given at or after 12 months.'};
+  }
+  if(ageM < 12){
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:4},{doseNumber:3,offsetWeeks:Math.max(12,(12-ageM)*WPM)}], maxAgeCutoffMonths:maxAge, note:'Age <12mo, 0 prior: 2 doses 4wk apart + final dose \u22658wk after dose 2 and no earlier than 12 months.'};
+    if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0},{doseNumber:3,offsetWeeks:Math.max(8,(12-ageM)*WPM)}], maxAgeCutoffMonths:maxAge, note:'1 prior dose before 12 months: give dose 2 now, then final dose \u22658wk later and no earlier than 12 months.'};
+    if(prev===2) return {plan:[{doseNumber:3,offsetWeeks:Math.max(0,(12-ageM)*WPM)}], maxAgeCutoffMonths:maxAge, note:'2 prior doses before 12 months: give final dose now or at 12 months, whichever is later.'};
+    return {plan:[], maxAgeCutoffMonths:maxAge, note:'Series likely complete.'};
+  }
+  if(ageM < 15){
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:8}], maxAgeCutoffMonths:maxAge, note:'Age 12-14mo, 0 prior: 1 dose now + final dose 8wk later.'};
+    if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0}], maxAgeCutoffMonths:maxAge, note:'Age 12-14mo, 1 prior: give 1 dose now. If the earlier dose was before 12 months, a final dose 8 weeks later may still be needed — verify the age of the previous dose.'};
+    return {plan:[{doseNumber:prev+1,offsetWeeks:0}], maxAgeCutoffMonths:maxAge, note:'\u22651 prior dose: a booster/final dose now usually completes series; verify age at earlier dose if the first Hib dose was before 12 months.'};
+  }
+  if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0}], maxAgeCutoffMonths:maxAge, note:'Age \u226515mo, 0 prior: single dose completes catch-up.'};
+  return {plan:[], maxAgeCutoffMonths:maxAge, note:'Series complete for this age group.'};
+}
+function calcPCV(ageM, prev){
+  if(ageM < 12){
+    if(prev===0 && ageM >= 7) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:4},{doseNumber:3,offsetWeeks:Math.max(12,(12-ageM)*WPM)}], note:'7-11mo, 0 prior: dose 1 now, dose 2 \u22654wk later, final dose at \u226512mo and \u22658wk after dose 2.'};
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:4},{doseNumber:3,offsetWeeks:8},{doseNumber:4,offsetWeeks:Math.max(16,(12-ageM)*WPM)}], note:'<7mo, 0 prior: 4 doses (now, +4wk, +4wk, then final dose at 12-15mo and \u22658wk after the 3rd).'};
+    if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0},{doseNumber:3,offsetWeeks:4},{doseNumber:4,offsetWeeks:12}], note:'0-11mo, 1 prior: 3 more doses.'};
+    if(prev===2) return {plan:[{doseNumber:3,offsetWeeks:0},{doseNumber:4,offsetWeeks:8}], note:'0-11mo, 2 prior: 2 more doses.'};
+    return {plan:[], note:'Series likely complete for this age.'};
+  }
+  if(ageM < 24){
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:8}], note:'12-23mo, 0 prior: 2 doses, \u22658wk apart (CDC catch-up for healthy children).'};
+    if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0},{doseNumber:3,offsetWeeks:8}], note:'12-23mo, 1 prior: 2 more doses.'};
+    if(prev===2) return {plan:[{doseNumber:3,offsetWeeks:0}], note:'12-23mo, 2 prior: 1 more dose.'};
+    return {plan:[], note:'Series likely complete for this age.'};
+  }
+  if(ageM < 60){
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0}], maxAgeCutoffMonths:60, note:'24-59mo, 0 prior: a single dose completes catch-up for healthy children (2 doses \u22658wk apart if a high-risk condition is present).'};
+    if(prev===1) return {plan:[{doseNumber:2,offsetWeeks:0}], maxAgeCutoffMonths:60, note:'24-59mo, 1 prior: 1 more dose.'};
+    return {plan:[], maxAgeCutoffMonths:60, note:'Series complete; no further doses for healthy child.'};
+  }
+  return {plan:[], note:'Generally no catch-up PCV for healthy children \u22655yr unless high-risk (asplenia, immunocompromise, cochlear implant, chronic disease).'};
+}
+function calcMMR(ageM, prev){
+  const minAge = catchupRegion==='CDC' ? 12 : 9;
+  if(ageM < minAge) return {plan:[{doseNumber:1, offsetWeeks:(minAge-ageM)*WPM}], note:'Min age for dose 1 in '+(catchupRegion==='CDC'?'CDC':'WHO/Egypt')+' mode is '+minAge+' months; first dose deferred until then.'};
+  const total = 2;
+  if(prev >= total) return {plan:[], note:'Series complete (2 MMR doses documented).'};
+  const cum = [0,4];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:'Minimum interval between MMR doses: 4 weeks.'};
+}
+function calcVaricella(ageM, prev){
+  if(ageM < 12) return {plan:[{doseNumber:1, offsetWeeks:(12-ageM)*WPM}], note:'Min age for dose 1 is 12 months; first dose deferred until then.'};
+  const total = 2;
+  if(prev >= total) return {plan:[], note:'Series complete (2 Varicella doses documented).'};
+  const intervalWk = ageM < 156 ? 12 : 4;
+  const cum = [0, intervalWk];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note: (ageM<156 ? 'Minimum interval <13yr: 3 months (12wk); 4-day grace period may apply.' : 'Minimum interval \u226513yr: 4 weeks.')};
+}
+function calcHepA(ageM, prev){
+  if(ageM < 12) return {plan:[{doseNumber:1, offsetWeeks:(12-ageM)*WPM}], note:'Min age for dose 1 is 12 months; first dose deferred until then.'};
+  const total = 2;
+  if(prev >= total) return {plan:[], note:'Series complete (2 HepA doses documented).'};
+  const cum = [0,26];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:'Minimum interval between HepA doses: 6 months (26wk).'};
+}
+function calcRotavirus(ageM, prev, brand){
+  const chosenBrand = brand || 'unknown';
+  const total = chosenBrand === 'rotarix' ? 2 : 3;
+  const maxFinal = 8;
+  let warning = null;
+
+  if(ageM >= maxFinal){
+    return {
+      plan:[],
+      maxAgeCutoffMonths:maxFinal,
+      note:'Do NOT initiate or continue rotavirus series at/after age 8 months 0 days, regardless of doses received.',
+      warning:'Series must NOT be continued beyond 8 months of age. In endemic or high-mortality settings, WHO allows missed doses to be given up to 24 months, but that is not the default Egypt rule in this app.'
+    };
+  }
+
+  if(prev===0 && ageM >= 3.45){
+    warning = 'First dose should generally not be initiated at/after age 15 weeks 0 days (~3.45 months). Verify eligibility.';
+    return {plan:[], maxAgeCutoffMonths:maxFinal, note:'Rotavirus vaccine must not be started at/after 15 weeks 0 days of age in this app, so no doses are scheduled.', warning};
+  }
+
+  if(prev >= total){
+    return {plan:[], maxAgeCutoffMonths:maxFinal, note:'Series complete for the selected rotavirus product.', warning};
+  }
+
+  const cum = total === 2 ? [0,4] : [0,4,8];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){
+    plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]});
+  }
+
+  let note = '';
+  if(chosenBrand === 'rotarix') note = 'Rotarix selected: total series = 2 oral doses, minimum 4 weeks apart.';
+  else if(chosenBrand === 'rotateq') note = 'RotaTeq selected: total series = 3 oral doses, minimum 4 weeks apart.';
+  else note = 'Product unknown or mixed: use a 3-dose total schedule, minimum 4 weeks apart, and do not restart the series.';
+
+  note += ' Default rule in this app: start after 6 weeks, do not start at/after 15 weeks, and complete before 8 months. Note: WHO allows missed doses to be given up to 24 months in endemic, high-mortality, or disrupted-program settings; that policy is not applied as the Egypt default here.';
+
+  return {plan, maxAgeCutoffMonths:maxFinal, note, warning};
+}
+function calcMenACWY(ageM, prev, brand){
+  if(brand === 'nimenrix'){
+    const minAgeWeeks = 6;
+    if(ageM * WPM < minAgeWeeks) return {plan:[], note:'Nimenrix (MenACWY-TT) is licensed from 6 weeks of age; not yet eligible.'};
+    if(ageM < 6){
+      if(prev >= 2) return {plan:[{doseNumber:3, offsetWeeks:Math.max(8, Math.round((12-ageM)*WPM))}], note:'Nimenrix schedule started at 6 weeks to <6 months: 2-dose primary series 8 weeks apart, then booster at 12 months at least 2 months after the last dose.'};
+      if(prev === 1) return {plan:[{doseNumber:2, offsetWeeks:8},{doseNumber:3, offsetWeeks:Math.max(16, Math.round((12-ageM)*WPM))}], note:'Nimenrix schedule started at 6 weeks to <6 months: complete the 2-dose primary series 8 weeks apart, then booster at 12 months at least 2 months after the last dose.'};
+      return {plan:[{doseNumber:1, offsetWeeks:0},{doseNumber:2, offsetWeeks:8},{doseNumber:3, offsetWeeks:Math.max(16, Math.round((12-ageM)*WPM))}], note:'Nimenrix schedule at 6 weeks to <6 months: 2 doses 8 weeks apart plus booster at 12 months (at least 2 months after the last infant dose).'};
+    }
+    if(ageM < 12){
+      if(prev >= 1) return {plan:[{doseNumber:2, offsetWeeks:Math.max(8, Math.round((12-ageM)*WPM))}], note:'Nimenrix schedule at 6 to <12 months: 1 infant dose followed by booster at 12 months at least 2 months later.'};
+      return {plan:[{doseNumber:1, offsetWeeks:0},{doseNumber:2, offsetWeeks:Math.max(8, Math.round((12-ageM)*WPM))}], note:'Nimenrix schedule at 6 to <12 months: 1 dose now and booster at 12 months at least 2 months later.'};
+    }
+    if(prev >= 1) return {plan:[], note:'Single-dose Nimenrix series complete (given at \u226512 months of age).'};
+    return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Nimenrix (MenACWY-TT) single dose is sufficient from 12 months of age through adulthood per product information; future boosters depend on risk and local policy.'};
+  }
+  // Default: Menveo / Menactra \u2014 US ACIP adolescent schedule
+  if(prev >= 2) return {plan:[], note:'Series complete (primary dose + booster documented).'};
+  if(prev === 0){
+    if(ageM >= 192) return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Single dose sufficient if series starts at \u226516 years (no booster needed).'};
+    const boosterWeeks = Math.max(8, (192-ageM)*WPM);
+    return {plan:[{doseNumber:1, offsetWeeks:0},{doseNumber:2, offsetWeeks:boosterWeeks}], note:'Primary dose now (routine 11-12yr); booster \u226516yr or \u22658wk after dose1, whichever is later. (Menveo/Menactra US ACIP schedule; check the product label for Menveo/Menactra minimum age.)'};
+  }
+  // prev === 1
+  if(ageM >= 192) return {plan:[], note:'Booster not needed if the single prior dose was given at \u226516 years.'};
+  const boosterWeeks = Math.max(8, (192-ageM)*WPM);
+  return {plan:[{doseNumber:2, offsetWeeks:boosterWeeks}], note:'Booster due \u226516yr or \u22658wk after dose1, whichever is later. (Menveo/Menactra US ACIP schedule.)'};
+}
+
+function calcMenB(ageM, prev, brand){
+  if(brand === 'trumenba'){
+    if(ageM < 120) return {plan:[], note:'Trumenba (bivalent rLP2086) is licensed from 10 years of age; not yet eligible.'};
+    const total = 2;
+    if(prev >= total) return {plan:[], note:'Series complete (2-dose routine schedule: 0, 6mo).'};
+    const cum = [0,26];
+    const plan = [];
+    for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+    return {plan, note:'Trumenba routine 2-dose schedule (0, 6mo). A 3-dose accelerated schedule (0, 1\u20132mo, 6mo) exists for outbreak settings but is not modeled here. Not interchangeable with Bexsero.'};
+  }
+
+  // Bexsero (4CMenB) \u2014 primary dose count/interval and booster need depend on age at start
+  if(ageM < 2) return {plan:[], note:'4CMenB (Bexsero) is licensed from 2 months of age; not yet eligible.'};
+
+  let totalPrimary, intervalWeeks, hasBooster, bandLabel;
+  if(ageM < 6){ totalPrimary=3; intervalWeeks=4; hasBooster=true; bandLabel='2\u20135mo'; }
+  else if(ageM < 12){ totalPrimary=2; intervalWeeks=8; hasBooster=true; bandLabel='6\u201311mo'; }
+  else if(ageM < 24){ totalPrimary=2; intervalWeeks=8; hasBooster=true; bandLabel='12\u201323mo'; }
+  else if(ageM < 132){ totalPrimary=2; intervalWeeks=8; hasBooster=false; bandLabel='2\u201310yr'; }
+  else { totalPrimary=2; intervalWeeks=4; hasBooster=false; bandLabel='\u226511yr'; }
+
+  const cum = [0];
+  for(let i=1;i<totalPrimary;i++) cum.push(cum[i-1]+intervalWeeks);
+  const total = hasBooster ? totalPrimary+1 : totalPrimary;
+
+  if(prev >= total) return {plan:[], note:'Series complete for the '+bandLabel+' age-at-start track (4CMenB/Bexsero).'};
+
+  const plan = [];
+  const primaryPrev = Math.min(prev, totalPrimary);
+  for(let d=primaryPrev+1; d<=totalPrimary; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[primaryPrev]}); }
+
+  if(hasBooster && total > totalPrimary && prev < total){
+    const ageAnchorWeeks = ageM < 12 ? (12-ageM)*WPM : 0;
+    const lastPrimaryOffset = plan.length ? plan[plan.length-1].offsetWeeks : 0;
+    const boosterOffset = Math.max(ageAnchorWeeks, lastPrimaryOffset + 8);
+    plan.push({doseNumber: totalPrimary+1, offsetWeeks: boosterOffset});
+  }
+
+  return {plan, note: bandLabel+' band (4CMenB/Bexsero): '+totalPrimary+'-dose primary ('+(intervalWeeks===4?'\u22651mo':'\u22652mo')+' apart)'+(hasBooster?' + booster at 12\u201323mo (\u22652mo after primary series).':'. No booster currently specified for this band.')+' Not interchangeable with Trumenba.'};
+}
+function calcHPV(ageM, prev){
+  if(ageM < 108) return {plan:[], note:'Minimum age for HPV vaccination is 9 years; not yet eligible.'};
+  const total = (prev>=2 || ageM>=180) ? 3 : 2;
+  if(prev >= total) return {plan:[], note:'Series complete ('+total+'-dose track).'};
+  const cum = total===2 ? [0,26] : [0,4,24];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:'2-dose series (0, 6mo) if series STARTED before 15th birthday; 3-dose series (0, 1-2mo, 6mo) if started at/after 15th birthday. This tool estimates the track from current age \u2014 verify using the age at the FIRST dose.'};
+}
+function calcInfluenza(ageM, prev){
+  if(ageM < 6) return {plan:[], note:'Minimum age for influenza vaccination is 6 months; not yet eligible.'};
+  if(ageM < 108){
+    if(prev===0) return {plan:[{doseNumber:1,offsetWeeks:0},{doseNumber:2,offsetWeeks:4}], note:'First-time vaccinee <9 years: 2 doses, \u22654wk apart, within this season.'};
+    return {plan:[{doseNumber:1,offsetWeeks:0}], note:'Previously vaccinated: 1 annual dose.'};
+  }
+  return {plan:[{doseNumber:1,offsetWeeks:0}], note:'\u22659 years: 1 annual dose regardless of prior vaccination history.'};
+}
+function calcCovid19(ageM, prev){
+  return {plan:[], note:'COVID-19 vaccine intervals and product/age eligibility change frequently by season and immune status. This calculator does not model COVID-19 dosing \u2014 consult current national/CDC 2026\u20132027 guidance directly.'};
+}
+
+// ===================== Travel / specialty vaccines (sourced from pediatric vaccines.pdf) =====================
+function calcBCG(ageM, prev){
+  if(prev >= 1) return {plan:[], note:'BCG is a single-dose vaccine; series complete.'};
+  if(ageM > 12) return {plan:[], note:'BCG catch-up beyond infancy requires individual risk/TB-exposure assessment and is not modeled here \u2014 consult local TB/ID guidance.'};
+  return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Single intradermal dose. WHO recommends BCG within the first few days of life in high-burden settings; several European countries allow catch-up up to 1 year of age if missed at birth. Contraindicated in HIV-positive infants due to disseminated-BCG risk.'};
+}
+
+function calcTyphoid(ageM, prev, brand){
+  if(brand === 'parenteral'){
+    if(ageM < 24) return {plan:[], note:'Parenteral Vi polysaccharide typhoid vaccine (Typhim Vi/Typherix) is licensed from 2 years of age (source notes possible off-label use 1\u20132yr only if benefit outweighs risk). Neither typhoid vaccine is effective under age 2.'};
+    if(prev >= 1) return {plan:[], note:'Single-dose series given. Source recommends re-boosting roughly every 3 years if exposure risk continues (anti-Vi IgG titres may decline sooner).'};
+    return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Single IM dose; \u224860% protective efficacy in older children. Booster recommended roughly every 3 years if continued risk.'};
+  }
+  if(ageM < 72) return {plan:[], note:'Oral live TY21a typhoid vaccine (Vivotif/Zerotyph) is licensed from 6 years of age; not yet eligible. Consider the parenteral Vi track instead for younger children (\u22652yr).'};
+  const total = 3;
+  if(prev >= total) return {plan:[], note:'3-dose oral course complete (\u223c3 years of protection). Avoid concomitant antibiotics (reduce efficacy); contraindicated if immunocompromised (live vaccine).'};
+  const cum = [0, 2/7, 4/7];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:'3 oral capsules taken with bicarbonate buffer. Source states doses are taken \u201cover several days\u201d without an exact interval \u2014 alternate-day dosing (days 1, 3, 5) shown here reflects standard product labeling, not this specific source; verify against current Vivotif/Zerotyph instructions. Avoid antibiotics during the course; contraindicated if immunocompromised.'};
+}
+
+function calcYellowFever(ageM, prev){
+  if(ageM < 6) return {plan:[], note:'Yellow fever vaccine should not be given under 6 months of age due to risk of vaccine-associated encephalitis.'};
+  if(prev >= 1){
+    if(ageM < 24) return {plan:[{doseNumber:2, offsetWeeks: Math.max(0,(120-ageM)*WPM)}], note:'Dose given between 6 months and 2 years of age requires a booster before travel if that travel occurs more than 10 years after the initial dose (WHO 2016 update). Verify the exact prior-dose date separately \u2014 this estimates timing from current age only.'};
+    return {plan:[], note:'Single dose confers lifelong immunity when given at \u22652 years of age; no booster required per WHO (2016) unless immunocompromised.'};
+  }
+  if(ageM < 9) return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Age 6\u20139 months: give only in high-risk/outbreak settings per source; routine minimum age is 9 months. Single 0.5mL dose (IM or deep SC).'};
+  return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Single 0.5mL dose (IM or deep SC). Lifelong immunity if given \u22652yr; if given between 6mo\u20132yr, a booster is needed before travel once >10yr has elapsed since the dose.'};
+}
+
+function calcRabiesPreExposure(ageM, prev, brand){
+  const isAccelerated = brand === 'accelerated';
+  const cum = isAccelerated ? [0, 3/7, 1, 52] : [0, 1, 4];
+  const total = cum.length;
+  if(prev >= total) return {plan:[], note:(isAccelerated ? 'Accelerated (days 0, 3, 7 + 1yr booster)' : 'Standard (days 0, 7, 28)')+' pre-exposure rabies course complete.'};
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:(isAccelerated ? 'Accelerated IM schedule: days 0, 3, 7, plus a booster at 1 year.' : 'Standard IM schedule: days 0, 7, 28 (the day-28 dose may be given as early as day 21 if travel timing requires it).')+' Restarting an interrupted course is not necessary. This models PRE-exposure prophylaxis only \u2014 post-exposure prophylaxis (PEP) still required after any bite/exposure regardless of pre-exposure status, and exact PEP day-schedule is not modeled here as the source only gives the WHO exposure-category framework, not day-by-day PEP dosing.'};
+}
+
+function calcCholera(ageM, prev){
+  if(ageM < 24) return {plan:[], note:'Dukoral (oral cholera vaccine) is licensed in Europe from 2 years of age; not yet eligible.'};
+  const isYounger = ageM < 72;
+  const totalPrimary = isYounger ? 3 : 2;
+  const boosterWeeks = isYounger ? 26 : 104;
+  const total = totalPrimary + 1;
+  if(prev >= total) return {plan:[], note:'Primary course and booster dose complete.'};
+  const cum = [0];
+  for(let i=1;i<totalPrimary;i++) cum.push(cum[i-1]+2);
+  const plan = [];
+  const primaryPrev = Math.min(prev, totalPrimary);
+  for(let d=primaryPrev+1; d<=totalPrimary; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[primaryPrev]}); }
+  if(prev < total){
+    const lastOffset = plan.length ? plan[plan.length-1].offsetWeeks : 0;
+    plan.push({doseNumber: totalPrimary+1, offsetWeeks: lastOffset + boosterWeeks});
+  }
+  return {plan, note: totalPrimary+'-dose primary course (1\u20136 weeks apart; restart if >6wk between the first two doses), followed by a single booster '+(isYounger?'6 months':'2 years')+' after completing the primary series. Source states \u201c2 or 3 doses depending on age\u201d without giving an exact cutoff \u2014 the standard product-labeling break (2\u20136yr = 3 doses, \u22656yr = 2 doses) is applied here; verify against the current SmPC. Complete all doses \u22651 week before travel.'};
+}
+
+function calcPPSV23(ageM, prev){
+  if(ageM < 24) return {plan:[], note:'PPSV23 (pneumococcal polysaccharide) is not licensed under 2 years of age; not yet eligible. Use the PCV (conjugate) module for infants/toddlers.'};
+  if(prev === 0){
+    return {plan:[{doseNumber:1, offsetWeeks:0}], note:'Single dose for high-risk individuals \u22652yr (asplenia, sickle-cell disease, HIV, immunodeficiency, CSF leak, cochlear implant, chronic renal/organ disease, malignancy, transplant) or routinely at \u226565yr. Sequencing with PCV: give \u22658 weeks after the last PCV dose; if PPSV23 is given first, delay any subsequent PCV dose by \u22651 year.'};
+  }
+  if(prev === 1){
+    return {plan:[{doseNumber:2, offsetWeeks:260}], note:'A second (booster) dose is recommended 5 years after the first PPSV23 dose, per multiple national schedules cited in the source, for high-risk groups (asplenia, sickle-cell disease, HIV, or other immunocompromising conditions). This interval is not universally applied to every indication \u2014 verify against the specific risk-group recommendation.'};
+  }
+  return {plan:[], note:'No more than 2 lifetime PPSV23 doses are described in this source (single 5-year booster for high-risk groups); further doses require individualized specialist guidance.'};
+}
+
+function calcTdap_CDC(ageM, prev){
+  if(ageM < 84) return {plan:[], note:'For ages under 7 years, use the DTaP module instead \u2014 Tdap/Td catch-up logic applies from age 7 onward.'};
+  if(prev === 0){
+    return {plan:[{doseNumber:1, offsetWeeks:0}], note:'First Tdap/Td dose: Tdap is preferred over Td for anyone \u226511yr with no documented prior Tdap dose (or unknown history). Thereafter, routine booster every 10 years. Wound management can require an earlier booster regardless of this 10-year interval: give if \u226510yr since last dose for clean/minor wounds, or \u22655yr since last dose for dirty/tetanus-prone wounds (not modeled here \u2014 apply manually if relevant). Pregnant individuals should receive a Tdap dose in EVERY pregnancy, ideally between 27\u201336 weeks gestation, regardless of prior Tdap history \u2014 also not modeled by this dose-count logic.'};
+  }
+  return {plan:[{doseNumber: prev+1, offsetWeeks: 520}], note:'Routine Td/Tdap booster recommended every 10 years after the last dose (520 weeks shown here as an approximation from your current age \u2014 anchor to the actual date of the last dose instead). Wound management can require an earlier booster: \u226510yr since last dose for clean/minor wounds, \u22655yr for dirty/tetanus-prone wounds. Pregnant individuals should receive Tdap in EVERY pregnancy (ideally 27\u201336 weeks gestation) regardless of this routine interval \u2014 not modeled by dose-count logic here.'};
+}
+
+function calcTBE(ageM, prev){
+  if(ageM < 12) return {plan:[], note:'Pediatric TBE vaccines (FSME-Immun junior, Encepur children) are licensed from around 1 year of age in the source formulations cited; not yet eligible.'};
+  if(prev >= 4){
+    return {plan:[{doseNumber:prev+1, offsetWeeks:260}], note:'Routine TBE booster recommended every 5 years after the last booster. Country variants noted in source: 3-year interval for age \u226560yr in Austria; 10-year interval in Switzerland.'};
+  }
+  const cum = [0, 4, 26, 182];
+  const plan = [];
+  for(let d=prev+1; d<=4; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  let note;
+  if(prev === 0) note = 'Conventional 3-dose primary series: dose 2 at 1\u20133 months after dose 1 (1-month minimum used here), dose 3 at 5 months after dose 2 (an alternative 9\u201312-month interval also exists per label), then a first booster 3 years after dose 3. Ideally complete the primary series before tick season.';
+  else if(prev === 1) note = 'Dose 3 due 5 months after dose 2 (an alternative 9\u201312-month interval also exists per label), then a first booster 3 years later. Ideally complete before tick season.';
+  else if(prev === 2) note = 'First booster due 3 years after dose 3; routine boosting every 5 years thereafter (country variants: 3yr if \u226560yr in Austria; 10yr in Switzerland).';
+  else note = 'Next booster due; routine boosting every 5 years thereafter (country variants: 3yr if \u226560yr in Austria; 10yr in Switzerland).';
+  return {plan, note};
+}
+
+function calcDengue(ageM, prev){
+  if(ageM < 108) return {plan:[], note:'Dengvaxia is restricted to individuals with laboratory-confirmed prior dengue exposure and is associated with increased severe-dengue risk in seronegative children under 9 years; not modeled below this age.'};
+  const total = 3;
+  if(prev >= total) return {plan:[], note:'3-dose Dengvaxia series complete (0, 6, 12mo).'};
+  const cum = [0,26,52];
+  const plan = [];
+  for(let d=prev+1; d<=total; d++){ plan.push({doseNumber:d, offsetWeeks: cum[d-1]-cum[prev]}); }
+  return {plan, note:'Dengvaxia (CYD-TDV): 3-dose series, 6 months apart (0, 6, 12mo). REQUIRES laboratory confirmation of prior dengue infection (e.g. dengue IgG ELISA) before use \u2014 do not give to dengue-naive individuals due to the risk of antibody-dependent enhancement/severe dengue.'};
+}
+
+const VACCINES = {
+  hepb:      { label:'Hepatitis B (HepB)', desc:'3-dose series. Min interval 1\u21922: 4wk; 2\u21923: 8wk (\u226516wk after dose1). Min age for final dose ~24wk.', calc: calcHepB },
+  dtap_who:  { label:'DTaP / DT series – WHO (Egypt)', desc:'WHO/Egypt: 3 primary + 12\u201323mo booster + 4\u20137yr booster (Td/DT ok); switches to Td at \u22657yr.', calc: calcDTaP_WHO },
+  dtap_cdc:  { label:'DTaP series – CDC', desc:'5-dose series through age 6yr; switches to Tdap/Td catch-up at \u22657yr.', calc: calcDTaP_CDC },
+  ipv:       { label:'Poliovirus \u2013 Injectable (IPV)', desc:'4-dose series; final dose \u22654yr and \u22656mo after previous dose. Models the injectable IPV/Salk catch-up schedule only \u2014 oral OPV/Sabin dosing is not modeled here (see the Routine Schedule tab).', calc: calcIPV },
+  hib:       { label:'Haemophilus influenzae b (Hib)', desc:'Dose count depends on age at start; not needed for healthy children \u22655yr.', calc: calcHib },
+  pcv:       { label:'Pneumococcal Conjugate (PCV)', desc:'Dose count depends on age at start; catch-up generally not needed \u22655yr unless high-risk. Different vaccine class from PPSV23 (polysaccharide) \u2014 see that entry for the distinction.', calc: calcPCV },
+  mmr:       { label:'Measles-Mumps-Rubella (MMR)', desc:'2-dose series; min age 12mo; min interval 4wk.', calc: calcMMR },
+  varicella: { label:'Varicella (Chickenpox)', desc:'2-dose series; min age 12mo; interval 3mo if <13yr, 4wk if \u226513yr.', calc: calcVaricella },
+  hepa:      { label:'Hepatitis A (HepA)', desc:'2-dose series; min age 12mo; min interval 6mo.', calc: calcHepA },
+  rotavirus: { label:'Rotavirus (Oral)', desc:'Brand-specific schedule. Rotarix = 2 doses; RotaTeq = 3 doses. In CDC mode complete by 8mo and do not start ≥15wk; in WHO/Egypt mode use WHO-style catch-up when Egypt-specific data are unavailable.', calc: calcRotavirus,
+    brands: [
+      { key:'rotarix', label:'Rotarix (2-dose series)' },
+      { key:'rotateq', label:'RotaTeq (3-dose series)' },
+      { key:'unknown', label:'Unknown / mixed product history (treat as 3-dose total)' }
+    ]
+  },
+  menacwy:   { label:'Meningococcal ACWY (MenACWY)', desc:'Schedule depends on brand. Menveo/Menactra (US ACIP): primary dose 11-12yr + booster 16yr. Nimenrix (MenACWY-TT): licensed from 6wk \u2014 2-dose infant series if <12mo, single dose if \u226512mo.', calc: calcMenACWY,
+    brands: [
+      { key:'us_acwy', label:'Menveo / Menactra (US adolescent schedule, \u226524mo)' },
+      { key:'nimenrix', label:'Nimenrix (MenACWY-TT, infant-eligible from 6wk)' }
+    ]
+  },
+  menb:      { label:'Meningococcal B (MenB)', desc:'Not interchangeable between brands \u2014 pick a product. Bexsero (4CMenB): age-banded primary series (2\u201310 doses schedule varies) + booster if started <24mo. Trumenba: \u226510yr, 2-dose routine schedule (0, 6mo).', calc: calcMenB,
+    brands: [
+      { key:'bexsero', label:'Bexsero (4CMenB, from 2mo)' },
+      { key:'trumenba', label:'Trumenba (bivalent rLP2086, \u226510yr)' }
+    ]
+  },
+  hpv:       { label:'Human Papillomavirus (HPV)', desc:'2-dose series if started <15yr; 3-dose series if started \u226515yr. Min age 9yr.', calc: calcHPV },
+  influenza: { label:'Influenza (Injectable)', desc:'Age 6mo-8yr: 2 doses \u22654wk apart if fewer than 2 prior influenza doses or history unknown; otherwise 1 dose/season.', calc: calcInfluenza },
+  covid19:   { label:'COVID-19', desc:'Dosing intervals vary by season/product/age \u2014 not modeled here; check current guidance.', calc: calcCovid19 },
+
+  bcg:       { label:'BCG (Tuberculosis)', desc:'Single intradermal dose, ideally within first days of life; catch-up up to 1yr allowed in several European countries. Contraindicated in HIV-positive infants.', calc: calcBCG },
+  typhoid:   { label:'Typhoid (Oral or Injectable)', desc:'Two non-interchangeable tracks by brand: oral live TY21a (\u22656yr, 3 doses) or parenteral Vi polysaccharide (\u22652yr, single dose + \u22483yr boosters).', calc: calcTyphoid,
+    brands: [
+      { key:'oral', label:'Oral live TY21a (Vivotif/Zerotyph, \u22656yr)' },
+      { key:'parenteral', label:'Parenteral Vi polysaccharide (Typhim Vi/Typherix, \u22652yr)' }
+    ]
+  },
+  yellowfever: { label:'Yellow Fever', desc:'Single 0.5mL dose (IM/deep SC). Min age 9mo routine (6\u20139mo only if high-risk). Lifelong immunity if given \u22652yr; booster before travel if given 6mo\u20132yr and >10yr has elapsed.', calc: calcYellowFever },
+  rabiespre: { label:'Rabies (Pre-Exposure)', desc:'Pre-exposure prophylaxis only. Standard: days 0,7,28 (IM). Accelerated: days 0,3,7 + 1yr booster. Post-exposure dosing is NOT modeled here.', calc: calcRabiesPreExposure,
+    brands: [
+      { key:'standard', label:'Standard (days 0, 7, 28)' },
+      { key:'accelerated', label:'Accelerated (days 0, 3, 7 + 1yr booster)' }
+    ]
+  },
+  cholera:   { label:'Cholera (Dukoral)', desc:'Oral vaccine, \u22652yr. 2\u20133-dose primary course (age-dependent per label; 1\u20136wk apart) + single booster (6mo if 2\u20136yr, 2yr if \u22656yr).', calc: calcCholera },
+  dengue:    { label:'Dengue (Dengvaxia)', desc:'Seropositive-confirmed individuals only (\u22489yr per safety data). 3-dose series, 6mo apart. Do NOT give to dengue-naive individuals.', calc: calcDengue },
+
+  ppsv23:    { label:'Pneumococcal Polysaccharide (PPSV23)', desc:'\u22652yr, high-risk conditions or routine at \u226565yr. \u22658wk after last PCV dose; 5-year booster for high-risk groups (asplenia, sickle-cell, HIV, immunocompromise). Different vaccine class from PCV (conjugate) \u2014 no lasting immune memory, not used under 2yr.', calc: calcPPSV23 },
+  tdap_who:  { label:'Td / Tdap booster – WHO (Egypt)', desc:'\u22657yr. Td booster at 9\u201315yr completes WHO 6-dose series; no routine 10-yr boosters.', calc: calcTdap_WHO },
+  tdap_cdc:  { label:'Tdap / Td booster – CDC', desc:'\u22657yr standalone booster track. Routine every 10yr; earlier if dirty wound (\u22655yr) or clean wound (\u226510yr). Give in EVERY pregnancy (27\u201336wk gestation).', calc: calcTdap_CDC },
+  tbe:       { label:'Tick-Borne Encephalitis (TBE)', desc:'From \u22481yr. 3-dose primary (1\u20133mo, then 5mo or 9\u201312mo) + booster at 3yr, then every 5yr (3yr if \u226560yr in Austria; 10yr in Switzerland).', calc: calcTBE }
+};
+
+// ===================== UI wiring =====================
+let currentVaccine = 'pcv';
+const vaccineListEl = document.getElementById('vaccineList');
+Object.keys(VACCINES).sort((a, b) => VACCINES[a].label.localeCompare(VACCINES[b].label)).forEach(key=>{
+  const btn = document.createElement('button');
+  btn.className = 'vaccine-btn' + (key===currentVaccine ? ' active' : '');
+  btn.textContent = VACCINES[key].label;
+  btn.dataset.key = key;
+  btn.onclick = () => selectVaccine(key);
+  vaccineListEl.appendChild(btn);
+});
+
+let currentBrand = null;
+
+['dtap_cdc','dtap_who','ipv','hib','pcv','rotavirus'].forEach(function(k){
+  const f = VACCINES[k].calc;
+  VACCINES[k].calc = function(ageM, prev, brand, past){
+    const r = f(ageM, prev, brand, past);
+    const ageW = ageM * WPM;
+    if(prev === 0 && ageW < 6 && r.plan && r.plan.length){
+      const delay = 6 - ageW;
+      r.plan = r.plan.map(p => Object.assign({}, p, {offsetWeeks: ((k==='hib'||k==='pcv') && p.offsetWeeks >= 20) ? p.offsetWeeks : Math.round((p.offsetWeeks + delay)*100)/100}));
+      r.note = (r.note || '') + ' Minimum age for dose 1 is 6 weeks, so the first dose is scheduled at 6 weeks of age.';
+    }
+    return r;
+  };
+});
+function selectVaccine(key){
+  currentVaccine = key;
+  document.querySelectorAll('.vaccine-btn').forEach(b => b.classList.toggle('active', b.dataset.key===key));
+  document.getElementById('vaccineTitle').textContent = VACCINES[key].label;
+  document.getElementById('vaccineDesc').textContent = VACCINES[key].desc;
+  document.getElementById('resultText').textContent = '';
+  document.getElementById('warningText').textContent = '';
+
+  const brandWrap = document.getElementById('brandSelectWrap');
+  const brandSelect = document.getElementById('brandSelect');
+  const brands = VACCINES[key].brands;
+  if(brands && brands.length){
+    brandSelect.innerHTML = '';
+    brands.forEach(b => {
+      const opt = document.createElement('option');
+      opt.value = b.key; opt.textContent = b.label;
+      brandSelect.appendChild(opt);
+    });
+    currentBrand = brands[0].key;
+    brandSelect.value = currentBrand;
+    brandWrap.style.display = '';
+  } else {
+    currentBrand = null;
+    brandWrap.style.display = 'none';
+  }
+
+  clearOverlay();
+}
+function onBrandChange(){
+  currentBrand = document.getElementById('brandSelect').value;
+}
+selectVaccine(currentVaccine);
+setCatchupRegion('EGYPT');
+
+const prevDosesSelect = document.getElementById('prevDoses');
+const priorFieldsContainer = document.getElementById('priorDosesFields');
+function renderPriorDoseFields(){
+  const n = parseInt(prevDosesSelect.value, 10);
+  priorFieldsContainer.innerHTML = '';
+  for(let i=1;i<=n;i++){
+    const wrap = document.createElement('div');
+    const lbl = document.createElement('label');
+    lbl.textContent = 'Age at Dose ' + i + ' (months)';
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.min = '0'; inp.id = 'ageAtDose' + i;
+    inp.placeholder = 'e.g. ' + (i*2);
+    wrap.appendChild(lbl); wrap.appendChild(inp);
+    priorFieldsContainer.appendChild(wrap);
+  }
+}
+prevDosesSelect.addEventListener('change', renderPriorDoseFields);
+renderPriorDoseFields();
+
+// ===================== Rendering =====================
+function clearOverlay(){
+  _mk = {px:null, level:0, max:0}; _iv = {count:0, max:0};
+  document.querySelectorAll('.marker, .interval-arrow, .interval-text, .max-cutoff, .invalid-zone').forEach(el => el.remove());
+}
+function addMarker(months, label, ageLabel, isFuture, variant = 'normal'){
+  const track = document.getElementById('timelineTrack');
+  const pct = monthsToPercent(months);
+  const marker = document.createElement('div');
+  marker.className = 'marker ' + (isFuture ? 'future' : 'past') + (variant === 'stagger-up' ? ' stagger-up' : '');
+  marker.style.left = pct + '%';
+  marker.innerHTML = `<div class="dose-label">${label}</div><div class="bar"></div><div class="age-label">${ageLabel}</div>`;
+  track.appendChild(marker);
+  let level = 0;
+  if(track.offsetWidth){
+    const px = pct / 100 * track.offsetWidth;
+    const w = marker.querySelector('.dose-label').offsetWidth + 6;
+    if(_mk.px !== null && Math.abs(px - _mk.px) < w) level = (_mk.level + 1) % 5;
+    _mk = {px, level, max: Math.max(_mk.max, level)};
+  }
+  marker.style.setProperty('--lift', 'calc(var(--line) * ' + (_baseLines + level) + ')');
+  return pct;
+}
+function addIntervalArrow(fromPct, toPct, weeksLabel){
+  const track = document.getElementById('timelineTrack');
+  const arrow = document.createElement('div');
+  arrow.className = 'interval-arrow';
+  arrow.style.left = fromPct + '%';
+  arrow.style.width = Math.max(0.5, (toPct - fromPct)) + '%';
+  track.appendChild(arrow);
+  const text = document.createElement('div');
+  text.className = 'interval-text';
+  text.style.left = ((fromPct + toPct)/2) + '%';
+  text.textContent = weeksLabel;
+  track.appendChild(text);
+  const level = _iv.count % 4;
+  _iv.count++;
+  _iv.max = Math.max(_iv.max, level);
+  arrow.style.setProperty('--lvl', level);
+  text.style.setProperty('--lvl', level);
+}
+function addMaxCutoff(months, label){
+  const track = document.getElementById('timelineTrack');
+  const pct = monthsToPercent(months);
+  const line = document.createElement('div');
+  line.className = 'max-cutoff';
+  line.style.left = pct + '%';
+  line.innerHTML = `<div class="max-label">${label}</div>`;
+  track.appendChild(line);
+  const zone = document.createElement('div');
+  zone.className = 'invalid-zone';
+  zone.style.left = pct + '%'; zone.style.right = '0';
+  track.appendChild(zone);
+}
+function fmtWeeksMonths(wk){
+  const w = Math.round(wk);
+  const m = wk / WPM;
+  if(m < 0.5) return w + ' wk';
+  const r = Math.round(m * 2) / 2;
+  return w + ' wk (' + String(r).replace(/\.0$/, '') + ' mo)';
+}
+function fmtAge(months){
+  if(months < 24) return Math.round(months) + ' mo';
+  return (months/12).toFixed(1).replace(/\.0$/,'') + ' yr';
+}
+
+function renderMarkers(){
+  clearOverlay();
+  if(!lastCalcState) return;
+  const { currentAgeMonths, pastDoseAges, plan, result } = lastCalcState;
+  _baseLines = 2 + Math.min(3, Math.max(0, plan.length - 2));
+  pastDoseAges.forEach((val, i) => addMarker(val, 'Dose ' + (i+1), fmtAge(val), false));
+  let lastPct = null;
+  let lastOffsetWeeks = 0;
+  plan.forEach((d) => {
+    const targetAgeMonths = currentAgeMonths + (d.offsetWeeks / WPM);
+    const pct = addMarker(targetAgeMonths, "Dose " + d.doseNumber, fmtAge(targetAgeMonths), true, "normal");
+    if(lastPct !== null){
+      addIntervalArrow(lastPct, pct, fmtWeeksMonths(d.offsetWeeks - lastOffsetWeeks));
+    }
+    lastPct = pct;
+    lastOffsetWeeks = d.offsetWeeks;
+  });
+  if(result.maxAgeCutoffMonths){
+    addMaxCutoff(result.maxAgeCutoffMonths, 'Cutoff: ' + fmtAge(result.maxAgeCutoffMonths));
+  }
+  const wrap = document.querySelector('.timeline-wrap');
+  if(wrap) wrap.style.setProperty('--extra', 'calc(var(--line) * ' + (_baseLines + Math.max(_mk.max, _iv.max)) + ')');
+}
+
+function isShortCourse(plan){
+  if(!plan || plan.length < 2) return false;
+  for(let i = 1; i < plan.length; i++){
+    if(plan[i].offsetWeeks - plan[i-1].offsetWeeks <= 1.0001) return true;
+  }
+  return false;
+}
+
+function renderDayCourseCard(state){
+  const base = state.plan[0].offsetWeeks;
+  const vac = VACCINES[currentVaccine];
+  const rows = state.plan.map(d => {
+    const wk = d.offsetWeeks - base;
+    const rawDays = Math.round(wk * 7);
+    const days = currentVaccine === 'rabiespre' ? Math.max(1, rawDays) : rawDays + 1;
+    const when = wk <= 12 ? ('Day ' + days) : (fmtWeeksMonths(wk) + ' after dose 1');
+    return '<tr><td>' + when + '</td><td>Dose ' + d.doseNumber + '</td></tr>';
+  }).join('');
+  return '<h3>Day-based course schedule \u2013 ' + vac.label + '</h3>' +
+    '<table><thead><tr><th>When</th><th>Dose</th></tr></thead><tbody>' + rows + '</tbody></table>';
+}
+
+function renderDoseTable(state){
+  const { currentAgeMonths, pastDoseAges, plan, result } = state;
+  const vac = VACCINES[currentVaccine];
+  const short = isShortCourse(plan);
+  const rows = [];
+  pastDoseAges.forEach((a, i) => rows.push(['Dose ' + (i+1), 'Already given \u2013 at age ' + fmtAge(a)]));
+  plan.forEach((d, i) => {
+    const age = currentAgeMonths + d.offsetWeeks / WPM;
+    let timing;
+    if(short){
+      const wk = d.offsetWeeks - plan[0].offsetWeeks;
+      const rawDays = Math.round(wk * 7);
+      const days = currentVaccine === 'rabiespre' ? Math.max(1, rawDays) : rawDays + 1;
+      timing = (wk <= 12) ? ('Day ' + days) : (fmtWeeksMonths(wk) + ' after Dose ' + plan[0].doseNumber);
+    } else if(i === 0){
+      timing = d.offsetWeeks <= 0.01 ? 'Due now' : (fmtWeeksMonths(d.offsetWeeks) + ' from today');
+    } else {
+      timing = fmtWeeksMonths(d.offsetWeeks - plan[i-1].offsetWeeks) + ' after Dose ' + plan[i-1].doseNumber;
+    }
+    rows.push(['Dose ' + d.doseNumber, timing + ' (age ' + fmtAge(age) + ')']);
+  });
+  if(!rows.length) return '';
+  let html = '<h3>Dose schedule \u2013 ' + vac.label + '</h3>' +
+    '<table class="dose-table"><thead><tr><th>Dose</th><th>Timing</th></tr></thead><tbody>' +
+    rows.map(r => '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td></tr>').join('') + '</tbody></table>';
+  if(result.maxAgeCutoffMonths){
+    html += '<p class="dose-table-note">Age cutoff for this series: ' + fmtAge(result.maxAgeCutoffMonths) + '.</p>';
+  }
+  return html;
+}
+
+function redrawTimeline(){
+  const wrap = document.querySelector('.timeline-wrap');
+  const card = document.getElementById('dayCourseCard');
+  if(wrap) wrap.style.display = 'none';
+  if(!card) return;
+  const html = lastCalcState ? renderDoseTable(lastCalcState) : '';
+  card.innerHTML = html;
+  card.style.display = html ? 'block' : 'none';
+}
+
+function generateSchedule(){
+  const ageVal = parseFloat(document.getElementById('ageValue').value);
+  const ageUnit = document.getElementById('ageUnit').value;
+  const prevDoses = parseInt(document.getElementById('prevDoses').value, 10);
+  const resultText = document.getElementById('resultText');
+  const warningText = document.getElementById('warningText');
+  warningText.textContent = '';
+
+  if(isNaN(ageVal) || ageVal < 0){
+    resultText.textContent = 'Please enter a valid current age.';
+    return;
+  }
+  const currentAgeMonths = ageUnit === 'years' ? ageVal * 12 : ageVal;
+
+  const pastDoseAges = [];
+  for(let i=1;i<=prevDoses;i++){
+    const inp = document.getElementById('ageAtDose' + i);
+    const val = inp ? parseFloat(inp.value) : null;
+    if(val !== null && !isNaN(val)) pastDoseAges.push(val);
+  }
+
+  const alignedDoseAges = [];
+  for(let i=1;i<=prevDoses;i++){ const inp = document.getElementById('ageAtDose' + i); const v = inp ? parseFloat(inp.value) : NaN; alignedDoseAges.push(isNaN(v) ? null : v); }
+  const result = VACCINES[currentVaccine].calc(currentAgeMonths, prevDoses, currentBrand, alignedDoseAges);
+  const plan = result.plan || [];
+
+  if(plan.length === 0){
+    resultText.textContent = result.note || 'No further doses required based on the entered history.';
+  } else {
+    resultText.textContent = plan.length + ' future dose(s) required. ' + (result.note || '');
+  }
+  if(result.warning) warningText.textContent = '\u26A0 ' + result.warning;
+
+  lastCalcState = { currentAgeMonths, pastDoseAges, plan, result };
+  expandedYears.clear();
+  redrawTimeline();
+}
+
+// ===================== IVIG interval calculator =====================
+const IVIG_INTERVALS_MONTHS = {
+  itp1000: 10,
+  itp400: 8,
+  kawasaki: 11,
+  replacement: 8,
+  varicella_pep: 8,
+  measles_pep: 8
+};
+function updateIvigInterval(){
+  const indication = document.getElementById('ivigIndication').value;
+  const months = IVIG_INTERVALS_MONTHS[indication];
+  const dateVal = document.getElementById('ivigDate').value;
+  const resultEl = document.getElementById('ivigResult');
+  let text = 'Recommended minimum interval before MMR or Varicella-containing vaccine: <strong>' + months + ' months</strong>.';
+  if(dateVal){
+    const d = new Date(dateVal + 'T00:00:00');
+    d.setMonth(d.getMonth() + months);
+    const formatted = d.toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+    text += '<br>Earliest eligible date for live vaccine: <strong>' + formatted + '</strong>.';
+  }
+  resultEl.innerHTML = text;
+}
+updateIvigInterval();
+
+function openInNewWindow(){
+  const target = window.location.href;
+  window.open(target, '_blank', 'noopener,noreferrer');
+}
+
+</script>
+<script>
+(function(){
+  var MAP={tabCalculator:'calc',tabRoutine:'routine',tabIntegrated:'integrated',tabInterval:'interval',tabSpecial:'special'};
+  var TITLES={calc:'Catch-Up Calculator',routine:'Routine Vaccination Schedule',integrated:'Integrated Catch-Up + Routine Plan',interval:'Vaccine Interval Check',special:'Special Situations & Reference'};
+  function $(id){return document.getElementById(id);}
+  function val(id){var e=$(id);return e?e.value:'';}
+  function opt(id){var e=$(id);return (e&&e.options&&e.selectedIndex>=0)?e.options[e.selectedIndex].text:'';}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function regionBtn(pid){var b=document.querySelector('#'+pid+' .region-btn.active');return b?b.textContent.trim():'';}
+  function addField(anchorId){var a=$(anchorId);var g=a?a.closest('.form-grid'):null;if(!g)return;g.insertAdjacentHTML('afterbegin','<div><label>Patient name (optional, not saved)</label><input type="text" class="patient-name" autocomplete="off" placeholder="....." oninput="syncPatientName(this)"></div>');}
+  window.syncPatientName=function(src){document.querySelectorAll('.patient-name').forEach(function(e){if(e!==src)e.value=src.value;});};
+  function addButton(host,tab){if(host)host.insertAdjacentHTML('afterbegin','<button type="button" class="btn print-btn no-print" onclick="printTab(\''+tab+'\')">Print / Save as PDF</button>');}
+  addField('ageValue');addField('routineAgeValue');addField('integratedDob');
+  addButton(document.querySelector('#tabCalculator .main'),'calc');
+  ['tabRoutine:routine','tabIntegrated:integrated','tabInterval:interval','tabSpecial:special'].forEach(function(x){var p=x.split(':');var el=$(p[0]);addButton(el?el.firstElementChild:null,p[1]);});
+  window.printTab=function(tab){
+    var msg='';
+    if(tab==='calc'&&!($('resultText').textContent.trim()||($('dayCourseCard')&&$('dayCourseCard').style.display!=='none')))msg='Generate the schedule first.';
+    if(tab==='routine'&&!$('routineScheduleOutput').textContent.trim())msg='Show the routine schedule first.';
+    if(tab==='integrated'&&!$('integratedPlan').querySelector('.routine-card'))msg='Build the plan first.';
+    if(tab==='interval'&&!$('intervalResult').textContent.trim())msg='Check an interval first.';
+    if(msg){alert(msg);return;}
+    window.print();
+  };
+  function hideList(tab,panel){
+    var l=[];
+    if(tab==='calc'){l.push(panel.querySelector('.sidebar'));l.push($('brandSelectWrap'));panel.querySelectorAll('.main .form-grid, #priorDosesFields').forEach(function(e){l.push(e);});}
+    if(tab==='routine'||tab==='integrated'){var cs=Array.prototype.filter.call(panel.firstElementChild.children,function(e){return e.classList&&e.classList.contains('card');});l.push(cs[0]);if(tab==='integrated')l.push(cs[1]);}
+    if(tab==='interval'){panel.querySelectorAll('.form-grid').forEach(function(e){l.push(e);});}
+    return l.filter(Boolean);
+  }
+  function details(tab){
+    if(tab==='calc')return 'Vaccine: '+($('vaccineTitle')?$('vaccineTitle').textContent.trim():'')+' | Age: '+val('ageValue')+' '+opt('ageUnit')+' | Previous doses: '+opt('prevDoses');
+    if(tab==='routine')return 'Schedule: '+regionBtn('tabRoutine')+' | Age: '+val('routineAgeValue')+' '+opt('routineAgeUnit');
+    if(tab==='integrated')return 'Schedule: '+regionBtn('tabIntegrated')+' | Visit date: '+val('integratedVisitDate');
+    if(tab==='interval')return 'Vaccines compared: '+opt('intervalVaxA')+' and '+opt('intervalVaxB');
+    return '';
+  }
+  window.prepForPrint=function(){
+    window.cleanupAfterPrint();
+    var panel=document.querySelector('.tab-panel.active');if(!panel)return;
+    var tab=MAP[panel.id];
+    hideList(tab,panel).forEach(function(e){e.classList.add('print-hide');});
+    var name='';document.querySelectorAll('.patient-name').forEach(function(e){if(e.value.trim())name=e.value.trim();});
+    var showName=(tab==='calc'||tab==='routine'||tab==='integrated');
+    var h='<h1>Vaccination Guide For Pediatricians</h1><div><strong>'+esc(TITLES[tab])+'</strong></div>'+(showName&&name?'<div><strong>Patient:</strong> '+esc(name)+'</div>':'')+(details(tab)?'<div>'+esc(details(tab))+'</div>':'')+'<div>Printed: '+esc(new Date().toLocaleDateString())+'</div>';
+    var hd=document.createElement('div');hd.id='printHeader';hd.innerHTML=h;panel.insertBefore(hd,panel.firstChild);
+    var f='Decision-support aid only. Confirm against national schedules, product labels and the child\u2019s vaccination record before giving any vaccine.'+(tab==='integrated'?' Doses marked assumed in the history table were not verified.':'');
+    var ft=document.createElement('div');ft.id='printFooter';ft.textContent=f;panel.appendChild(ft);
+  };
+  window.cleanupAfterPrint=function(){
+    ['printHeader','printFooter'].forEach(function(id){var e=$(id);if(e&&e.parentNode)e.parentNode.removeChild(e);});
+    document.querySelectorAll('.print-hide').forEach(function(e){e.classList.remove('print-hide');});
+  };
+  window.addEventListener('beforeprint',window.prepForPrint);
+  window.addEventListener('afterprint',window.cleanupAfterPrint);
+})();
+</script>
+</body>
+</html>
